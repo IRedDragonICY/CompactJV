@@ -25,3 +25,13 @@
     -fx-background-color: #00ff00;
 }
 
+#filePathField {
+    -fx-font-size: 18px; /* adjust as needed */
+    -fx-pref-height: 40px; /* adjust as needed */
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10; /* adjust as needed for rounded corners */
+}
+
+#filePathField:hover {
+    -fx-background-color: #cccccc;
+}
