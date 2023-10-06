@@ -1,16 +1,27 @@
 #root {
-    -fx-background-color: #ffffff;
+    -fx-background-color: #27374D;
     -fx-background-radius: 15;
 }
 
 #closeButton {
     -fx-font-size: 18px;
-    -fx-text-fill: #000;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 0 15 0 5;
+    -fx-background-color: transparent;
+
+}
+#closeButton:hover {
+    -fx-background-color: #ff0000;
+}
+
+#minimizeButton {
+    -fx-font-size: 18px;
+    -fx-text-fill: #ffffff;
     -fx-background-radius: 0 15 0 5;
     -fx-background-color: transparent;
 }
 
-#closeButton:hover {
-    -fx-background-color: #ff0000;
+#minimizeButton:hover {
+    -fx-background-color: #00ff00;
 }
 

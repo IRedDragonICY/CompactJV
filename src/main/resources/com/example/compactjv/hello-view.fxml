@@ -2,14 +2,27 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.TextField?>
 
 <?import javafx.scene.control.Button?>
 <AnchorPane id="root" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.compactjv.HelloController">
 
-
   <Button fx:id="closeButton"
           AnchorPane.topAnchor="0"
           AnchorPane.rightAnchor="0"/>
+  <Button fx:id="minimizeButton"
+          AnchorPane.topAnchor="0"
+          AnchorPane.rightAnchor="30"/>
+
+  <HBox alignment = "CENTER" spacing = "10"
+        AnchorPane.leftAnchor = "50"
+        AnchorPane.rightAnchor = "50"
+        AnchorPane.bottomAnchor = "50"
+        AnchorPane.topAnchor = "50">
+    <TextField fx:id = "filePathField"/>
+    <Button fx:id = "selectFileButton" text = "Select File"/>
+  </HBox>
+
 </AnchorPane>
