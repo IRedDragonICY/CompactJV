@@ -13,7 +13,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.control.Label;
 
 
-public class HelloController {
+public class CompactController {
 
     @FXML
     private Button closeButton;

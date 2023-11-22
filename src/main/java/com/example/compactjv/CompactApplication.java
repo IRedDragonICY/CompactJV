@@ -8,13 +8,13 @@ import javafx.stage.StageStyle;
 import javafx.scene.paint.Color;
 import java.io.IOException;
 
-public class HelloApplication extends Application {
+public class CompactApplication extends Application {
     private double xOffset = 0;
     private double yOffset = 0;
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(CompactApplication.class.getResource("hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 500, 780);
 
         scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());

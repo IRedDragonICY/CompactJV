@@ -9,7 +9,7 @@
 
 <?import javafx.scene.control.Button?>
 
-<AnchorPane id="root" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.compactjv.HelloController">
+<AnchorPane id="root" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.compactjv.CompactController">
 
   <Button fx:id="closeButton"
           AnchorPane.topAnchor="0"
