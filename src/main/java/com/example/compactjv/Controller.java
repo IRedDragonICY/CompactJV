@@ -32,6 +32,9 @@ public class Controller {
     private Label currentSizeLabel;
 
     @FXML
+    private Label sizeOnDiskLabel;
+
+    @FXML
     private ChoiceBox<String> compressionAlgorithmChoiceBox;
 
     @FXML
@@ -115,12 +118,19 @@ public class Controller {
         if (newValue != null && !newValue.isEmpty()) {
             java.io.File file = new java.io.File(newValue);
             if (file.exists() && file.isDirectory()) {
-                File fileOperator = new File();
-                long sizeInBytes = fileOperator.calculateFolderSize(file);
+                Size size = new File().calculateFolderSize(newValue);
+                long sizeInBytes = size.getSize();
                 double sizeInKB = sizeInBytes / 1024.0;
                 double sizeInMB = sizeInKB / 1024.0;
                 double sizeInGB = sizeInMB / 1024.0;
-
+                long sizeOnDiskInBytes = size.getSizeOnDisk();
+                double sizeOnDiskInKB = sizeOnDiskInBytes / 1024.0;
+                double sizeOnDiskInMB = sizeOnDiskInKB / 1024.0;
+                double sizeOnDiskInGB = sizeOnDiskInMB / 1024.0;
+                sizeOnDiskLabel.setText((sizeOnDiskInKB < 1) ? sizeOnDiskInBytes + " bytes" :
+                        (sizeOnDiskInMB < 1) ? String.format("%.2f KB", sizeOnDiskInKB) :
+                                (sizeOnDiskInGB < 1) ? String.format("%.2f MB", sizeOnDiskInMB) :
+                                        String.format("%.2f GB", sizeOnDiskInGB));
                 currentSizeLabel.setText((sizeInKB < 1) ? sizeInBytes + " bytes" :
                         (sizeInMB < 1) ? String.format("%.2f KB", sizeInKB) :
                                 (sizeInGB < 1) ? String.format("%.2f MB", sizeInMB) :

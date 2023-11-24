@@ -34,7 +34,7 @@
 
     <VBox>
       <Label text=   "Estimated Size:" style="-fx-font-size: 20; -fx-text-fill: white;"/>
-      <Label fx:id=   "estimatedSizeField" text="??" style="-fx-font-size: 20; -fx-text-fill: white;"/>
+      <Label fx:id=  "sizeOnDiskLabel" text="??" style="-fx-font-size: 20; -fx-text-fill: white;"/>
     </VBox>
   </HBox>
 
