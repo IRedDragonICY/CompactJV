@@ -11,6 +11,11 @@ import java.io.File;
 import javafx.scene.input.TransferMode;
 import javafx.scene.input.Dragboard;
 import javafx.scene.control.Label;
+import javafx.scene.control.ChoiceBox;
+import javafx.collections.FXCollections;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.beans.value.ObservableValue;
 
 
 public class CompactController {
@@ -25,109 +30,111 @@ public class CompactController {
     private TextField filePathField;
 
     @FXML
-    private Button selectFileButton;
-    @FXML
     private Label currentSizeLabel;
 
     @FXML
-    private Label estimatedSizeField;
+    private ChoiceBox<String> compressionAlgorithmChoiceBox;
+
+    @FXML
+    private Button compressButton;
 
     public long calculateFolderSize(File folder) {
         long length = 0;
         File[] files = folder.listFiles();
 
-        if (files != null) { // Null if security restricted
+        if (files != null) {
             for (File file : files) {
-                if (file.isFile()) {
-                    length += file.length();
-                } else {
-                    length += calculateFolderSize(file); // Recursive call
-                }
+                length += (file.isFile()) ? file.length() : calculateFolderSize(file);
             }
         }
-
         return length;
     }
 
     public void initialize() {
+        setupCloseButton();
+        setupMinimizeButton();
+        setupCompressionAlgorithmChoiceBox();
+        setupFilePathField();
+        setupCompressButton();
+    }
+
+    private void setupCloseButton() {
         closeButton.setText("X");
         closeButton.setOnAction(event -> Platform.exit());
+    }
 
+    private void setupMinimizeButton() {
         minimizeButton.setText("-");
-        minimizeButton.setOnAction(event -> {
-            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            stage.setIconified(true);
-        });
+        minimizeButton.setOnAction(event -> ((Stage)((Node)event.getSource()).getScene().getWindow()).setIconified(true));
+    }
 
-        filePathField.setEditable(false); // make the text field non-editable
-        filePathField.setText("Drag and Drop here or Click here to select a directory"); // set the initial text
+    private void setupCompressionAlgorithmChoiceBox() {
+        compressionAlgorithmChoiceBox.setItems(FXCollections.observableArrayList("XPRESS4K", "XPRESS8K", "XPRESS16K", "LZX"));
+        compressionAlgorithmChoiceBox.setValue("XPRESS4K");
+    }
 
-        filePathField.setOnMouseClicked(event -> { // handle mouse click event
-            DirectoryChooser directoryChooser = new DirectoryChooser();
-            File selectedDirectory = directoryChooser.showDialog(null);
+    private void setupFilePathField() {
+        filePathField.setEditable(false);
+        filePathField.setText("Drag and Drop here or Click here to select a directory");
+        filePathField.setOnMouseClicked(this::handleMouseClickedOnField);
+        filePathField.setOnDragOver(this::handleDragOverField);
+        filePathField.setOnDragDropped(this::handleDragDroppedOnField);
+        filePathField.textProperty().addListener(this::handleFieldTextChanged);
+    }
 
-            if (selectedDirectory != null) {
-                filePathField.setText(selectedDirectory.getAbsolutePath());
-            }
-        });
+    private void handleMouseClickedOnField(MouseEvent event) {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        File selectedDirectory = directoryChooser.showDialog(null);
+        if (selectedDirectory != null) {
+            filePathField.setText(selectedDirectory.getAbsolutePath());
+        }
+    }
 
-        // Add the following code for drag and drop functionality:
-        filePathField.setOnDragOver(event -> {
-            if (event.getGestureSource() != filePathField && event.getDragboard().hasFiles()) {
-                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-            }
-            event.consume();
-        });
+    private void handleDragOverField(DragEvent event) {
+        if (event.getGestureSource() != filePathField && event.getDragboard().hasFiles()) {
+            event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+        }
+        event.consume();
+    }
 
-        filePathField.setOnDragDropped(event -> {
-            Dragboard db = event.getDragboard();
-            boolean success = false;
-            if (db.hasFiles()) {
-                filePathField.setText(db.getFiles().get(0).getAbsolutePath());
-                success = true;
-            }
+    private void handleDragDroppedOnField(DragEvent event) {
+        Dragboard db = event.getDragboard();
+        boolean success = false;
+        if (db.hasFiles()) {
+            filePathField.setText(db.getFiles().get(0).getAbsolutePath());
+            success = true;
+        }
+        event.setDropCompleted(success);
+        event.consume();
+    }
 
-            event.setDropCompleted(success);
-            event.consume();
-        });
+    private void handleFieldTextChanged(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        if (newValue != null && !newValue.isEmpty()) {
+            File file = new File(newValue);
+            if (file.exists() && file.isDirectory()) {
+                long sizeInBytes = calculateFolderSize(file);
+                double sizeInKB = sizeInBytes / 1024.0;
+                double sizeInMB = sizeInKB / 1024.0;
+                double sizeInGB = sizeInMB / 1024.0;
 
-
-        filePathField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null && !newValue.isEmpty()) {
-                File file = new File(newValue);
-                if (file.exists() && file.isDirectory()) { // Check that it's a directory
-                    long sizeInBytes = calculateFolderSize(file);
-                    double sizeInKB = sizeInBytes / 1024.0;
-                    double sizeInMB = sizeInKB / 1024.0;
-                    double sizeInGB = sizeInMB / 1024.0;
-
-                    // If less than one KB
-                    if (sizeInKB < 1) {
-                        currentSizeLabel.setText(sizeInBytes + " bytes");
-                    }
-                    // If less than one MB
-                    else if (sizeInMB < 1) {
-                        currentSizeLabel.setText(String.format("%.2f KB", sizeInKB));
-                    }
-                    // If less than one GB
-                    else if (sizeInGB < 1) {
-                        currentSizeLabel.setText(String.format("%.2f MB", sizeInMB));
-                    }
-                    // If more than one GB
-                    else {
-                        currentSizeLabel.setText(String.format("%.2f GB", sizeInGB));
-                    }
-
-                } else {
-                    currentSizeLabel.setText(" - ");
-                }
+                currentSizeLabel.setText((sizeInKB < 1) ? sizeInBytes + " bytes" :
+                        (sizeInMB < 1) ? String.format("%.2f KB", sizeInKB) :
+                                (sizeInGB < 1) ? String.format("%.2f MB", sizeInMB) :
+                                        String.format("%.2f GB", sizeInGB));
             } else {
                 currentSizeLabel.setText(" - ");
             }
+        } else {
+            currentSizeLabel.setText(" - ");
+        }
+    }
+
+    private void setupCompressButton() {
+        compressButton.setOnAction(event -> {
+            String filePath = filePathField.getText();
+            String algorithm = compressionAlgorithmChoiceBox.getValue();
+            Compact compact = new Compact();
+            compact.compress(filePath, algorithm);
         });
-
-
-
-
     }
 }

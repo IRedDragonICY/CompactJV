@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.control.TextField?>
-
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 
 <AnchorPane id="root" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.compactjv.CompactController">
-
   <Button fx:id="closeButton"
           AnchorPane.topAnchor="0"
           AnchorPane.rightAnchor="0"/>
@@ -38,5 +36,20 @@
       <Label text=   "Estimated Size:" style="-fx-font-size: 20; -fx-text-fill: white;"/>
       <Label fx:id=   "estimatedSizeField" text="??" style="-fx-font-size: 20; -fx-text-fill: white;"/>
     </VBox>
+  </HBox>
+
+  <HBox alignment="CENTER" spacing="50"
+        AnchorPane.leftAnchor="50"
+        AnchorPane.rightAnchor ="50"
+        AnchorPane.topAnchor="150">
+    <Label text="Compression Algorithm:" style="-fx-font-size: 20; -fx-text-fill: white;"/>
+    <ChoiceBox fx:id="compressionAlgorithmChoiceBox"
+               style="-fx-font-size: 20; -fx-text-fill: white;"/>
+  </HBox>
+  <HBox alignment="CENTER" spacing="50"
+        AnchorPane.leftAnchor="50"
+        AnchorPane.rightAnchor ="50"
+        AnchorPane.bottomAnchor="50">
+    <Button fx:id="compressButton" text="Compress" style="-fx-font-size: 20; -fx-text-fill: white;"/>
   </HBox>
 </AnchorPane>
