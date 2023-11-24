@@ -8,7 +8,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 
-<AnchorPane id="root" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.compactjv.CompactController">
+<AnchorPane id="root" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.compactjv.Controller">
   <Button fx:id="closeButton"
           AnchorPane.topAnchor="0"
           AnchorPane.rightAnchor="0"/>
@@ -51,5 +51,7 @@
         AnchorPane.rightAnchor ="50"
         AnchorPane.bottomAnchor="50">
     <Button fx:id="compressButton" text="Compress" style="-fx-font-size: 20; -fx-text-fill: white;"/>
+    <Button fx:id="decompressButton" text="Decompress" style="-fx-font-size: 20; -fx-text-fill: white;"/>
   </HBox>
+
 </AnchorPane>

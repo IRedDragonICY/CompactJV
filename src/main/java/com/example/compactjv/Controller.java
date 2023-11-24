@@ -7,7 +7,6 @@ import javafx.application.Platform;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.scene.Node;
-import java.io.File;
 import javafx.scene.input.TransferMode;
 import javafx.scene.input.Dragboard;
 import javafx.scene.control.Label;
@@ -18,7 +17,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.beans.value.ObservableValue;
 
 
-public class CompactController {
+public class Controller {
 
     @FXML
     private Button closeButton;
@@ -38,12 +37,15 @@ public class CompactController {
     @FXML
     private Button compressButton;
 
-    public long calculateFolderSize(File folder) {
+    @FXML
+    private Button decompressButton;
+
+    public long calculateFolderSize(java.io.File folder) {
         long length = 0;
-        File[] files = folder.listFiles();
+        java.io.File[] files = folder.listFiles();
 
         if (files != null) {
-            for (File file : files) {
+            for (java.io.File file : files) {
                 length += (file.isFile()) ? file.length() : calculateFolderSize(file);
             }
         }
@@ -56,6 +58,7 @@ public class CompactController {
         setupCompressionAlgorithmChoiceBox();
         setupFilePathField();
         setupCompressButton();
+        setupDecompressButton();
     }
 
     private void setupCloseButton() {
@@ -84,7 +87,7 @@ public class CompactController {
 
     private void handleMouseClickedOnField(MouseEvent event) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        File selectedDirectory = directoryChooser.showDialog(null);
+        java.io.File selectedDirectory = directoryChooser.showDialog(null);
         if (selectedDirectory != null) {
             filePathField.setText(selectedDirectory.getAbsolutePath());
         }
@@ -110,9 +113,10 @@ public class CompactController {
 
     private void handleFieldTextChanged(ObservableValue<? extends String> observable, String oldValue, String newValue) {
         if (newValue != null && !newValue.isEmpty()) {
-            File file = new File(newValue);
+            java.io.File file = new java.io.File(newValue);
             if (file.exists() && file.isDirectory()) {
-                long sizeInBytes = calculateFolderSize(file);
+                File fileOperator = new File();
+                long sizeInBytes = fileOperator.calculateFolderSize(file);
                 double sizeInKB = sizeInBytes / 1024.0;
                 double sizeInMB = sizeInKB / 1024.0;
                 double sizeInGB = sizeInMB / 1024.0;
@@ -127,14 +131,31 @@ public class CompactController {
         } else {
             currentSizeLabel.setText(" - ");
         }
+        File compact = new File();
+        if (compact.isCompressed(newValue)) {
+            decompressButton.setVisible(true);
+        } else {
+            decompressButton.setVisible(false);
+        }
     }
 
     private void setupCompressButton() {
         compressButton.setOnAction(event -> {
             String filePath = filePathField.getText();
             String algorithm = compressionAlgorithmChoiceBox.getValue();
-            Compact compact = new Compact();
+            File compact = new File();
             compact.compress(filePath, algorithm);
+        });
+    }
+
+    private void setupDecompressButton() {
+        decompressButton.setVisible(false);
+        decompressButton.setOnAction(event -> {
+            String filePath = filePathField.getText();
+            File compact = new File();
+            if (compact.isCompressed(filePath)) {
+                compact.decompress(filePath);
+            }
         });
     }
 }
