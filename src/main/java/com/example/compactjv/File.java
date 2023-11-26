@@ -10,25 +10,26 @@ public class File {
     }
 
     public void decompress(String filePath) {
-        String command = "start cmd.exe /K compact /U /s:\"" + filePath + "\"";
+        String command = "start cmd.exe /K compact /U /F /s:\"" + filePath + "\"";
         runCommand(command);
     }
     public boolean isCompressed(String filePath) {
         String command = "compact /Q /S:\"" + filePath + "\"";
-        ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", command, filePath);
+        ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", command);
         try {
             Process process = processBuilder.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.contains("are compressed")) {
-                    return true;
+                System.out.println(line);
+                if (line.contains("0 are compressed")) {
+                    return false;
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
+        return true;
     }
 
     public Size calculateFolderSize(String filePath) {

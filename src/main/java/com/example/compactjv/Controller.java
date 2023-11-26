@@ -61,6 +61,7 @@ public class Controller {
         setupCompressionAlgorithmChoiceBox();
         setupFilePathField();
         setupCompressButton();
+        compressButton.setVisible(false);
         setupDecompressButton();
     }
 
@@ -144,8 +145,10 @@ public class Controller {
         File compact = new File();
         if (compact.isCompressed(newValue)) {
             decompressButton.setVisible(true);
+            compressButton.setVisible(false);
         } else {
             decompressButton.setVisible(false);
+            compressButton.setVisible(true);
         }
     }
 
@@ -155,6 +158,8 @@ public class Controller {
             String algorithm = compressionAlgorithmChoiceBox.getValue();
             File compact = new File();
             compact.compress(filePath, algorithm);
+            compressButton.setVisible(false);
+            decompressButton.setVisible(true);
         });
     }
 
@@ -165,6 +170,8 @@ public class Controller {
             File compact = new File();
             if (compact.isCompressed(filePath)) {
                 compact.decompress(filePath);
+                decompressButton.setVisible(false);
+                compressButton.setVisible(true);
             }
         });
     }

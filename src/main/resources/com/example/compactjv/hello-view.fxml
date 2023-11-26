@@ -26,7 +26,9 @@
 
   <HBox alignment="CENTER" spacing="50"
         AnchorPane.leftAnchor="50"
-        AnchorPane.rightAnchor ="50">
+        AnchorPane.rightAnchor ="50"
+        AnchorPane.topAnchor="500"
+  >
     <VBox>
       <Label text=   "Current Size:" style="-fx-font-size: 20; -fx-text-fill: white;"/>
       <Label fx:id=   "currentSizeLabel" style="-fx-font-size: 20; -fx-text-fill: white;"/>
@@ -41,10 +43,10 @@
   <HBox alignment="CENTER" spacing="50"
         AnchorPane.leftAnchor="50"
         AnchorPane.rightAnchor ="50"
-        AnchorPane.topAnchor="150">
-    <Label text="Compression Algorithm:" style="-fx-font-size: 20; -fx-text-fill: white;"/>
+        AnchorPane.topAnchor="400">
+    <Label fx:id="compressionAlgorithmLabel" text="Compression Algorithm:" style="-fx-font-size: 20; -fx-text-fill: white;"/>
     <ChoiceBox fx:id="compressionAlgorithmChoiceBox"
-               style="-fx-font-size: 20; -fx-text-fill: white;"/>
+               style="-fx-font-size: 12; -fx-text-fill: white;"/>
   </HBox>
   <HBox alignment="CENTER" spacing="50"
         AnchorPane.leftAnchor="50"
