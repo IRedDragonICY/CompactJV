@@ -15,7 +15,7 @@ import javafx.collections.FXCollections;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.beans.value.ObservableValue;
-
+import java.io.*;
 
 public class Controller {
 
@@ -151,15 +151,23 @@ public class Controller {
             compressButton.setVisible(true);
         }
     }
-
+    private void refreshSizeLabels() {
+        handleFieldTextChanged(null, "", filePathField.getText());
+    }
     private void setupCompressButton() {
         compressButton.setOnAction(event -> {
             String filePath = filePathField.getText();
             String algorithm = compressionAlgorithmChoiceBox.getValue();
             File compact = new File();
             compact.compress(filePath, algorithm);
-            compressButton.setVisible(false);
-            decompressButton.setVisible(true);
+            while (!compact.isCompressed(filePath)) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            handleFieldTextChanged(null, "", filePath);
         });
     }
 
@@ -168,11 +176,15 @@ public class Controller {
         decompressButton.setOnAction(event -> {
             String filePath = filePathField.getText();
             File compact = new File();
-            if (compact.isCompressed(filePath)) {
-                compact.decompress(filePath);
-                decompressButton.setVisible(false);
-                compressButton.setVisible(true);
+            compact.decompress(filePath);
+            while (compact.isCompressed(filePath)) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+            handleFieldTextChanged(null, "", filePath);
         });
     }
 }

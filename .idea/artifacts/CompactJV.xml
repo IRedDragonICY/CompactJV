@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="jpackage" name="CompactJV">
+    <output-path>$PROJECT_DIR$/out/artifacts/CompactJV</output-path>
+    <root id="root">
+      <element id="archive" name="CompactJV.jar">
+        <element id="module-output" name="CompactJV" />
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

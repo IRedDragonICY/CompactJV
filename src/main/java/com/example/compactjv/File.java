@@ -1,67 +1,68 @@
 package com.example.compactjv;
 
 import java.io.*;
+
 public class File {
+    private static final String CMD = "cmd.exe";
+    private static final String START_COMMAND = "start /B " + CMD + " /c compact";
+    private static final String QUERY_COMMAND = "compact /Q /S:";
 
     public void compress(String filePath, String algorithm) {
-        String command = "start cmd.exe /K compact /C /F /EXE:" + algorithm + " /s:\"" + filePath + "\"";
-        System.out.printf(command);
-        runCommand(command);
+        runCommand(START_COMMAND + " /C /F /EXE:" + algorithm + " /s:\"" + filePath + "\"");
     }
 
     public void decompress(String filePath) {
-        String command = "start cmd.exe /K compact /U /F /s:\"" + filePath + "\"";
-        runCommand(command);
+        runCommand(START_COMMAND + " /U /F /s:\"" + filePath + "\"");
     }
+
     public boolean isCompressed(String filePath) {
-        String command = "compact /Q /S:\"" + filePath + "\"";
-        ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", command);
-        try {
-            Process process = processBuilder.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-                if (line.contains("0 are compressed")) {
-                    return false;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return true;
+        String output = runCommandWithOutput(QUERY_COMMAND + "\"" + filePath + "\"");
+        return !output.contains("0 are compressed");
     }
 
     public Size calculateFolderSize(String filePath) {
-        String command = "compact /Q /S:\"" + filePath + "\"";
-        ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", command);
-        long size = 0;
-        long sizeOnDisk = 0;
-        System.out.println(filePath);
-        try {
-            Process process = processBuilder.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.contains("total bytes of data")) {
-                    String[] parts = line.split(" ");
-                    size = Long.parseLong(parts[0].replace(",", ""));
-                    sizeOnDisk = Long.parseLong(parts[8].replace(",", ""));
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new Size(size, sizeOnDisk);
+        String output = runCommandWithOutput(QUERY_COMMAND + "\"" + filePath + "\"");
+        return getSizeFromOutput(output);
     }
 
     private void runCommand(String command) {
-        ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", command);
+        ProcessBuilder processBuilder = new ProcessBuilder(CMD, "/c", command);
         try {
             Process process = processBuilder.start();
             process.waitFor();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private String runCommandWithOutput(String command) {
+        ProcessBuilder processBuilder = new ProcessBuilder(CMD, "/c", command);
+        StringBuilder output = new StringBuilder();
+        try {
+            Process process = processBuilder.start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return output.toString();
+    }
+
+    private Size getSizeFromOutput(String output) {
+        long size = 0;
+        long sizeOnDisk = 0;
+        String[] lines = output.split("\n");
+        for (String line : lines) {
+            if (line.contains("total bytes of data")) {
+                String[] parts = line.split(" ");
+                size = Long.parseLong(parts[0].replace(".", ""));
+                sizeOnDisk = Long.parseLong(parts[8].replace(".", ""));
+                break;
+            }
+        }
+        return new Size(size, sizeOnDisk);
     }
 }

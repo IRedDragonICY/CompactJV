@@ -4,10 +4,14 @@ plugins {
   id 'org.javamodularity.moduleplugin' version '1.8.12'
   id 'org.openjfx.javafxplugin' version '0.0.13'
   id 'org.beryx.jlink' version '2.25.0'
+  id 'edu.sc.seis.launch4j' version '3.0.5'
+    id 'com.github.johnrengelman.shadow' version '7.1.0'
+
 }
 
 group 'com.example'
 version '1.0-SNAPSHOT'
+
 
 repositories {
   mavenCentral()
@@ -20,13 +24,13 @@ ext {
 sourceCompatibility = '17'
 targetCompatibility = '17'
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile) {0
   options.encoding = 'UTF-8'
 }
 
 application {
   mainModule = 'com.example.compactjv'
-  mainClass = 'com.example.compactjv.HelloApplication'
+  mainClass = 'com.example.compactjv.Application'
 }
 
 javafx {
@@ -57,16 +61,27 @@ dependencies {
 }
 
 test {
-useJUnitPlatform()}
+  useJUnitPlatform()
+}
 
 jlink {
   imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
   options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
   launcher {
-    name = 'app'
+    name = 'CompactJV'
+    mainClass = 'com.example.compactjv.Application'
   }
 }
 
-jlinkZip {
-  group = 'distribution'
+//jlinkZip {
+//  group = 'distribution'
+//}
+
+launch4j {
+  mainClassName = 'com.example.compactjv.Application'
+  headerType = 'console'
+  outfile = 'CompactJV.exe'
+  bundledJrePath = 'jre'
 }
+
+
