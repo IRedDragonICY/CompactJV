@@ -8,7 +8,7 @@ public class File {
     private static final String QUERY_COMMAND = "compact /Q /S:";
 
     public void compress(String filePath, String algorithm) {
-        runCommand(START_COMMAND + " /C /F /EXE:" + algorithm + " /s:\"" + filePath + "\"");
+        runCommand(START_COMMAND + " /A /C /I /S /F /EXE:" + algorithm + " /s:\"" + filePath + "\"");
     }
 
     public void decompress(String filePath) {
@@ -47,6 +47,7 @@ public class File {
             String line;
             while ((line = reader.readLine()) != null) {
                 output.append(line).append("\n");
+                System.out.println(line);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -67,5 +68,12 @@ public class File {
             }
         }
         return new Size(size, sizeOnDisk);
+    }
+    public boolean isValidDirectory(String path) {
+        if (path != null && !path.isEmpty()) {
+            java.io.File file = new java.io.File(path);
+            return file.exists() && file.isDirectory();
+        }
+        return false;
     }
 }

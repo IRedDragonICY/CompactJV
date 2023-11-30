@@ -116,43 +116,15 @@ public class Controller {
     }
 
     private void handleFieldTextChanged(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        if (newValue != null && !newValue.isEmpty()) {
-            java.io.File file = new java.io.File(newValue);
-            if (file.exists() && file.isDirectory()) {
-                Size size = new File().calculateFolderSize(newValue);
-                long sizeInBytes = size.getSize();
-                double sizeInKB = sizeInBytes / 1024.0;
-                double sizeInMB = sizeInKB / 1024.0;
-                double sizeInGB = sizeInMB / 1024.0;
-                long sizeOnDiskInBytes = size.getSizeOnDisk();
-                double sizeOnDiskInKB = sizeOnDiskInBytes / 1024.0;
-                double sizeOnDiskInMB = sizeOnDiskInKB / 1024.0;
-                double sizeOnDiskInGB = sizeOnDiskInMB / 1024.0;
-                sizeOnDiskLabel.setText((sizeOnDiskInKB < 1) ? sizeOnDiskInBytes + " bytes" :
-                        (sizeOnDiskInMB < 1) ? String.format("%.2f KB", sizeOnDiskInKB) :
-                                (sizeOnDiskInGB < 1) ? String.format("%.2f MB", sizeOnDiskInMB) :
-                                        String.format("%.2f GB", sizeOnDiskInGB));
-                currentSizeLabel.setText((sizeInKB < 1) ? sizeInBytes + " bytes" :
-                        (sizeInMB < 1) ? String.format("%.2f KB", sizeInKB) :
-                                (sizeInGB < 1) ? String.format("%.2f MB", sizeInMB) :
-                                        String.format("%.2f GB", sizeInGB));
-            } else {
-                currentSizeLabel.setText(" - ");
-            }
-        } else {
-            currentSizeLabel.setText(" - ");
-        }
         File compact = new File();
-        if (compact.isCompressed(newValue)) {
-            decompressButton.setVisible(true);
-            compressButton.setVisible(false);
-        } else {
-            decompressButton.setVisible(false);
-            compressButton.setVisible(true);
+        boolean isCompressed = compact.isCompressed(newValue);
+        decompressButton.setVisible(isCompressed);
+        compressButton.setVisible(!isCompressed);
+        if (compact.isValidDirectory(newValue)) {
+            Size size = compact.calculateFolderSize(newValue);
+            sizeOnDiskLabel.setText(size.getSizeOnDiskFormatted());
+            currentSizeLabel.setText(size.getSizeFormatted());
         }
-    }
-    private void refreshSizeLabels() {
-        handleFieldTextChanged(null, "", filePathField.getText());
     }
     private void setupCompressButton() {
         compressButton.setOnAction(event -> {
@@ -160,13 +132,6 @@ public class Controller {
             String algorithm = compressionAlgorithmChoiceBox.getValue();
             File compact = new File();
             compact.compress(filePath, algorithm);
-            while (!compact.isCompressed(filePath)) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
             handleFieldTextChanged(null, "", filePath);
         });
     }
