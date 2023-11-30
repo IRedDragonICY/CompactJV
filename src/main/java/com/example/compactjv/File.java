@@ -29,6 +29,9 @@ public class File {
         ProcessBuilder processBuilder = new ProcessBuilder(CMD, "/c", command);
         try {
             Process process = processBuilder.start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            while (reader.readLine() != null) {
+            }
             process.waitFor();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();

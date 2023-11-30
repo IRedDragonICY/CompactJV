@@ -177,13 +177,6 @@ public class Controller {
             String filePath = filePathField.getText();
             File compact = new File();
             compact.decompress(filePath);
-            while (compact.isCompressed(filePath)) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
             handleFieldTextChanged(null, "", filePath);
         });
     }
