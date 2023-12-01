@@ -15,6 +15,8 @@ import javafx.collections.FXCollections;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.beans.value.ObservableValue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 public class Controller {
 
     @FXML
@@ -33,6 +35,8 @@ public class Controller {
     private Label compressionAlgorithmLabel;
 
     private File compact;
+
+    private ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     public void initialize() {
         setupButtons();
@@ -103,14 +107,32 @@ public class Controller {
 
     private void handleCompressionOrDecompression(boolean compression) {
         String filePath = compact.getFilePath();
+        Runnable task;
         if (compression) {
             String algorithm = compressionAlgorithmChoiceBox.getValue();
-            compact.compress(filePath, algorithm);
+            task = () -> {
+                compact.compress(filePath, algorithm);
+                Platform.runLater(() -> {
+                    updateButtonsAndLabels();
+                    compressButton.setDisable(false);  // Enable button after compression
+                    decompressButton.setDisable(false);  // Enable button after compression
+                });
+            };
         } else {
-            compact.decompress(filePath);
+            task = () -> {
+                compact.decompress(filePath);
+                Platform.runLater(() -> {
+                    updateButtonsAndLabels();
+                    compressButton.setDisable(false);  // Enable button after decompression
+                    decompressButton.setDisable(false);  // Enable button after decompression
+                });
+            };
         }
-        updateButtonsAndLabels();
+        compressButton.setDisable(true);  // Disable button before starting compression/decompression
+        decompressButton.setDisable(true);  // Disable button before starting compression/decompression
+        executorService.execute(task);
     }
+
 
     private void updateFilePath(java.io.File file) {
         compact.setFilePath(file.getAbsolutePath());
@@ -132,6 +154,7 @@ public class Controller {
             currentSizeLabel.setText(size.getSizeFormatted());
             sizeOnDiskLabel.setText(isCompressed ? size.getSizeOnDiskFormatted() : "??");
         }
+
     }
 
 }
