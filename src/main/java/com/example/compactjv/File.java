@@ -6,6 +6,14 @@ public class File {
     private static final String CMD = "cmd.exe";
     private static final String START_COMMAND = "start /B " + CMD + " /c compact";
     private static final String QUERY_COMMAND = "compact /Q /S:";
+    private String filePath;
+
+    public String getFilePath() {
+        return filePath;
+    }
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
 
     public void compress(String filePath, String algorithm) {
         runCommand(START_COMMAND + " /A /C /I /S /F /EXE:" + algorithm + " /s:\"" + filePath + "\"");
@@ -47,7 +55,6 @@ public class File {
             String line;
             while ((line = reader.readLine()) != null) {
                 output.append(line).append("\n");
-                System.out.println(line);
             }
         } catch (IOException e) {
             e.printStackTrace();

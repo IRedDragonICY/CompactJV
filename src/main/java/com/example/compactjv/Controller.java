@@ -15,64 +15,55 @@ import javafx.collections.FXCollections;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.beans.value.ObservableValue;
-import java.io.*;
-
 public class Controller {
 
     @FXML
-    private Button closeButton;
-
-    @FXML
-    private Button minimizeButton;
+    private Button closeButton, minimizeButton, compressButton, decompressButton;
 
     @FXML
     private TextField filePathField;
 
     @FXML
-    private Label currentSizeLabel;
-
-    @FXML
-    private Label sizeOnDiskLabel;
+    private Label currentSizeLabel, sizeOnDiskLabel;
 
     @FXML
     private ChoiceBox<String> compressionAlgorithmChoiceBox;
 
     @FXML
-    private Button compressButton;
+    private Label compressionAlgorithmLabel;
 
-    @FXML
-    private Button decompressButton;
-
-    public long calculateFolderSize(java.io.File folder) {
-        long length = 0;
-        java.io.File[] files = folder.listFiles();
-
-        if (files != null) {
-            for (java.io.File file : files) {
-                length += (file.isFile()) ? file.length() : calculateFolderSize(file);
-            }
-        }
-        return length;
-    }
+    private File compact;
 
     public void initialize() {
-        setupCloseButton();
-        setupMinimizeButton();
-        setupCompressionAlgorithmChoiceBox();
+        setupButtons();
         setupFilePathField();
-        setupCompressButton();
-        compressButton.setVisible(false);
-        setupDecompressButton();
+        setupCompressionAlgorithmChoiceBox();
+        compact = new File();
     }
 
-    private void setupCloseButton() {
+    private void setupButtons() {
         closeButton.setText("X");
         closeButton.setOnAction(event -> Platform.exit());
-    }
 
-    private void setupMinimizeButton() {
         minimizeButton.setText("-");
         minimizeButton.setOnAction(event -> ((Stage)((Node)event.getSource()).getScene().getWindow()).setIconified(true));
+
+        compressButton.setVisible(false);
+        compressButton.setOnAction(event -> handleCompressionOrDecompression(true));
+
+        decompressButton.setVisible(false);
+        decompressButton.setOnAction(event -> handleCompressionOrDecompression(false));
+
+        compressionAlgorithmLabel.setVisible(false); // initially hidden
+        compressionAlgorithmChoiceBox.setVisible(false); // initially hidden
+    }
+    private void setupFilePathField() {
+        filePathField.setEditable(false);
+        filePathField.setText("Drag and Drop here");
+        filePathField.setOnMouseClicked(this::handleMouseClickedOnField);
+        filePathField.setOnDragOver(this::handleDragOverField);
+        filePathField.setOnDragDropped(this::handleDragDroppedOnField);
+        filePathField.textProperty().addListener(this::handleFieldTextChanged);
     }
 
     private void setupCompressionAlgorithmChoiceBox() {
@@ -80,20 +71,11 @@ public class Controller {
         compressionAlgorithmChoiceBox.setValue("XPRESS4K");
     }
 
-    private void setupFilePathField() {
-        filePathField.setEditable(false);
-        filePathField.setText("Drag and Drop here or Click here to select a directory");
-        filePathField.setOnMouseClicked(this::handleMouseClickedOnField);
-        filePathField.setOnDragOver(this::handleDragOverField);
-        filePathField.setOnDragDropped(this::handleDragDroppedOnField);
-        filePathField.textProperty().addListener(this::handleFieldTextChanged);
-    }
-
     private void handleMouseClickedOnField(MouseEvent event) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         java.io.File selectedDirectory = directoryChooser.showDialog(null);
         if (selectedDirectory != null) {
-            filePathField.setText(selectedDirectory.getAbsolutePath());
+            updateFilePath(selectedDirectory);
         }
     }
 
@@ -108,7 +90,7 @@ public class Controller {
         Dragboard db = event.getDragboard();
         boolean success = false;
         if (db.hasFiles()) {
-            filePathField.setText(db.getFiles().get(0).getAbsolutePath());
+            updateFilePath(db.getFiles().get(0));
             success = true;
         }
         event.setDropCompleted(success);
@@ -116,33 +98,41 @@ public class Controller {
     }
 
     private void handleFieldTextChanged(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        File compact = new File();
-        boolean isCompressed = compact.isCompressed(newValue);
-        decompressButton.setVisible(isCompressed);
-        compressButton.setVisible(!isCompressed);
-        if (compact.isValidDirectory(newValue)) {
-            Size size = compact.calculateFolderSize(newValue);
-            sizeOnDiskLabel.setText(size.getSizeOnDiskFormatted());
-            currentSizeLabel.setText(size.getSizeFormatted());
-        }
-    }
-    private void setupCompressButton() {
-        compressButton.setOnAction(event -> {
-            String filePath = filePathField.getText();
-            String algorithm = compressionAlgorithmChoiceBox.getValue();
-            File compact = new File();
-            compact.compress(filePath, algorithm);
-            handleFieldTextChanged(null, "", filePath);
-        });
+        updateButtonsAndLabels();
     }
 
-    private void setupDecompressButton() {
-        decompressButton.setVisible(false);
-        decompressButton.setOnAction(event -> {
-            String filePath = filePathField.getText();
-            File compact = new File();
+    private void handleCompressionOrDecompression(boolean compression) {
+        String filePath = compact.getFilePath();
+        if (compression) {
+            String algorithm = compressionAlgorithmChoiceBox.getValue();
+            compact.compress(filePath, algorithm);
+        } else {
             compact.decompress(filePath);
-            handleFieldTextChanged(null, "", filePath);
-        });
+        }
+        updateButtonsAndLabels();
     }
+
+    private void updateFilePath(java.io.File file) {
+        compact.setFilePath(file.getAbsolutePath());
+        filePathField.setText(file.getName());
+        updateButtonsAndLabels();
+    }
+
+    private void updateButtonsAndLabels() {
+        String filePath = compact.getFilePath();
+        boolean isCompressed = compact.isCompressed(filePath);
+        decompressButton.setVisible(isCompressed);
+        compressButton.setVisible(!filePath.isEmpty());
+        compressionAlgorithmLabel.setVisible(!filePath.isEmpty());
+        compressionAlgorithmChoiceBox.setVisible(!filePath.isEmpty());
+        compressionAlgorithmChoiceBox.setVisible(!filePath.isEmpty());
+        compressButton.setText(isCompressed ? "Compress Again" : "Compress");
+        if (compact.isValidDirectory(filePath)) {
+            Size size = compact.calculateFolderSize(filePath);
+            currentSizeLabel.setText(size.getSizeFormatted());
+            sizeOnDiskLabel.setText(isCompressed ? size.getSizeOnDiskFormatted() : "??");
+        }
+    }
+
 }
+
