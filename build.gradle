@@ -4,13 +4,11 @@ plugins {
   id 'org.javamodularity.moduleplugin' version '1.8.12'
   id 'org.openjfx.javafxplugin' version '0.0.13'
   id 'org.beryx.jlink' version '2.25.0'
-  id 'edu.sc.seis.launch4j' version '3.0.5'
-    id 'com.github.johnrengelman.shadow' version '7.1.0'
 
 }
 
 group 'com.example'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 
 repositories {
@@ -77,11 +75,7 @@ jlink {
 //  group = 'distribution'
 //}
 
-launch4j {
-  mainClassName = 'com.example.compactjv.Application'
-  headerType = 'console'
-  outfile = 'CompactJV.exe'
-  bundledJrePath = 'jre'
-}
+
+
 
 
