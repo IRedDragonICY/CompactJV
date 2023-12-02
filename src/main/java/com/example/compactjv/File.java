@@ -5,7 +5,7 @@ import java.io.*;
 public class File {
     private static final String CMD = "cmd.exe";
     private static final String START_COMMAND = "start /B " + CMD + " /c compact";
-    private static final String QUERY_COMMAND = "compact /Q /S:";
+    private static final String QUERY_COMMAND = "compact /Q /I /S:";
     private String filePath;
 
     public String getFilePath() {
@@ -20,7 +20,7 @@ public class File {
     }
 
     public void decompress(String filePath) {
-        runCommand(START_COMMAND + " /U /F /s:\"" + filePath + "\"");
+        runCommand(START_COMMAND + " /U /I /A /F /s:\"" + filePath + "\"");
     }
 
     public boolean isCompressed(String filePath) {

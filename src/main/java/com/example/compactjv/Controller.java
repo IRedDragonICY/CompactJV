@@ -36,6 +36,8 @@ public class Controller {
 
     private ExecutorServiceManager executorServiceManager;
 
+    private boolean isDialogOpen = false;
+
     public void initialize() {
         setupButtons();
         setupFilePathField();
@@ -49,7 +51,7 @@ public class Controller {
         closeButton.setOnAction(event -> Platform.exit());
 
         minimizeButton.setText("-");
-        minimizeButton.setOnAction(event -> ((Stage)((Node)event.getSource()).getScene().getWindow()).setIconified(true));
+        minimizeButton.setOnAction(event -> ((Stage) ((Node) event.getSource()).getScene().getWindow()).setIconified(true));
 
         compressButton.setVisible(false);
         compressButton.setOnAction(event -> handleCompressionOrDecompression(true));
@@ -60,6 +62,7 @@ public class Controller {
         compressionAlgorithmLabel.setVisible(false);
         compressionAlgorithmChoiceBox.setVisible(false);
     }
+
     private void setupFilePathField() {
         filePathField.setEditable(false);
         filePathField.setText("Drag and Drop here");
@@ -75,10 +78,17 @@ public class Controller {
     }
 
     private void handleMouseClickedOnField(MouseEvent event) {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        java.io.File selectedDirectory = directoryChooser.showDialog(null);
-        if (selectedDirectory != null) {
-            updateFilePath(selectedDirectory);
+        try {
+            if (!isDialogOpen) {
+                isDialogOpen = true;
+                DirectoryChooser directoryChooser = new DirectoryChooser();
+                java.io.File selectedDirectory = directoryChooser.showDialog(null);
+                if (selectedDirectory != null) {
+                    updateFilePath(selectedDirectory);
+                }
+            }
+        } finally {
+            isDialogOpen = false;
         }
     }
 
@@ -157,7 +167,6 @@ public class Controller {
         };
         new Thread(task).start();
     }
-
 
 
 }
