@@ -103,8 +103,11 @@ public class Controller {
         Dragboard db = event.getDragboard();
         boolean success = false;
         if (db.hasFiles()) {
-            updateFilePath(db.getFiles().get(0));
-            success = true;
+            java.io.File file = db.getFiles().get(0);
+            if(file.isDirectory()){
+                updateFilePath(file);
+                success = true;
+            }
         }
         event.setDropCompleted(success);
         event.consume();
