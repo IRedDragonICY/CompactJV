@@ -137,7 +137,6 @@ public class Controller {
     private void updateFilePath(java.io.File file) {
         compact.setFilePath(file.getAbsolutePath());
         filePathField.setText(file.getName());
-        updateButtonsAndLabels();
     }
 
     private void updateButtonsAndLabels() {
@@ -146,7 +145,7 @@ public class Controller {
         decompressButton.setDisable(true);
         currentSizeLabel.setText("Loading...");
         sizeOnDiskLabel.setText("Loading...");
-
+        System.out.println("test");
         Runnable task = () -> {
             boolean isCompressed = compact.isCompressed(filePath);
             if (compact.isValidDirectory(filePath)) {
@@ -157,7 +156,6 @@ public class Controller {
                     decompressButton.setVisible(isCompressed);
                     compressButton.setVisible(!filePath.isEmpty());
                     compressionAlgorithmLabel.setVisible(!filePath.isEmpty());
-                    compressionAlgorithmChoiceBox.setVisible(!filePath.isEmpty());
                     compressionAlgorithmChoiceBox.setVisible(!filePath.isEmpty());
                     compressButton.setText(isCompressed ? "Compress Again" : "Compress");
                     currentSizeLabel.setText(size.getSizeFormatted());
