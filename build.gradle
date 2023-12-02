@@ -5,6 +5,7 @@ plugins {
   id 'org.openjfx.javafxplugin' version '0.0.13'
   id 'org.beryx.jlink' version '2.25.0'
 
+
 }
 
 group 'com.example'
@@ -74,6 +75,8 @@ jlink {
 //jlinkZip {
 //  group = 'distribution'
 //}
+
+
 
 
 

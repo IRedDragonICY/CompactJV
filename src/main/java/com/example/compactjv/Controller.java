@@ -15,10 +15,8 @@ import javafx.collections.FXCollections;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.beans.value.ObservableValue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-public class Controller {
 
+public class Controller {
     @FXML
     private Button closeButton, minimizeButton, compressButton, decompressButton;
 
@@ -36,13 +34,14 @@ public class Controller {
 
     private File compact;
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(2);
+    private ExecutorServiceManager executorServiceManager;
 
     public void initialize() {
         setupButtons();
         setupFilePathField();
         setupCompressionAlgorithmChoiceBox();
         compact = new File();
+        executorServiceManager = new ExecutorServiceManager();
     }
 
     private void setupButtons() {
@@ -58,8 +57,8 @@ public class Controller {
         decompressButton.setVisible(false);
         decompressButton.setOnAction(event -> handleCompressionOrDecompression(false));
 
-        compressionAlgorithmLabel.setVisible(false); // initially hidden
-        compressionAlgorithmChoiceBox.setVisible(false); // initially hidden
+        compressionAlgorithmLabel.setVisible(false);
+        compressionAlgorithmChoiceBox.setVisible(false);
     }
     private void setupFilePathField() {
         filePathField.setEditable(false);
@@ -107,32 +106,23 @@ public class Controller {
 
     private void handleCompressionOrDecompression(boolean compression) {
         String filePath = compact.getFilePath();
-        Runnable task;
-        if (compression) {
-            String algorithm = compressionAlgorithmChoiceBox.getValue();
-            task = () -> {
+        Runnable task = () -> {
+            if (compression) {
+                String algorithm = compressionAlgorithmChoiceBox.getValue();
                 compact.compress(filePath, algorithm);
-                Platform.runLater(() -> {
-                    updateButtonsAndLabels();
-                    compressButton.setDisable(false);  // Enable button after compression
-                    decompressButton.setDisable(false);  // Enable button after compression
-                });
-            };
-        } else {
-            task = () -> {
+            } else {
                 compact.decompress(filePath);
-                Platform.runLater(() -> {
-                    updateButtonsAndLabels();
-                    compressButton.setDisable(false);  // Enable button after decompression
-                    decompressButton.setDisable(false);  // Enable button after decompression
-                });
-            };
-        }
-        compressButton.setDisable(true);  // Disable button before starting compression/decompression
-        decompressButton.setDisable(true);  // Disable button before starting compression/decompression
-        executorService.execute(task);
+            }
+            Platform.runLater(() -> {
+                updateButtonsAndLabels();
+                compressButton.setDisable(false);
+                decompressButton.setDisable(false);
+            });
+        };
+        compressButton.setDisable(true);
+        decompressButton.setDisable(true);
+        executorServiceManager.executeTask(task);
     }
-
 
     private void updateFilePath(java.io.File file) {
         compact.setFilePath(file.getAbsolutePath());
@@ -142,20 +132,33 @@ public class Controller {
 
     private void updateButtonsAndLabels() {
         String filePath = compact.getFilePath();
-        boolean isCompressed = compact.isCompressed(filePath);
-        decompressButton.setVisible(isCompressed);
-        compressButton.setVisible(!filePath.isEmpty());
-        compressionAlgorithmLabel.setVisible(!filePath.isEmpty());
-        compressionAlgorithmChoiceBox.setVisible(!filePath.isEmpty());
-        compressionAlgorithmChoiceBox.setVisible(!filePath.isEmpty());
-        compressButton.setText(isCompressed ? "Compress Again" : "Compress");
-        if (compact.isValidDirectory(filePath)) {
-            Size size = compact.calculateFolderSize(filePath);
-            currentSizeLabel.setText(size.getSizeFormatted());
-            sizeOnDiskLabel.setText(isCompressed ? size.getSizeOnDiskFormatted() : "??");
-        }
+        compressButton.setDisable(true);
+        decompressButton.setDisable(true);
+        currentSizeLabel.setText("Loading...");
+        sizeOnDiskLabel.setText("Loading...");
 
+        Runnable task = () -> {
+            boolean isCompressed = compact.isCompressed(filePath);
+            if (compact.isValidDirectory(filePath)) {
+                Size size = compact.calculateFolderSize(filePath);
+                Platform.runLater(() -> {
+                    compressButton.setDisable(false);
+                    decompressButton.setDisable(false);
+                    decompressButton.setVisible(isCompressed);
+                    compressButton.setVisible(!filePath.isEmpty());
+                    compressionAlgorithmLabel.setVisible(!filePath.isEmpty());
+                    compressionAlgorithmChoiceBox.setVisible(!filePath.isEmpty());
+                    compressionAlgorithmChoiceBox.setVisible(!filePath.isEmpty());
+                    compressButton.setText(isCompressed ? "Compress Again" : "Compress");
+                    currentSizeLabel.setText(size.getSizeFormatted());
+                    sizeOnDiskLabel.setText(isCompressed ? size.getSizeOnDiskFormatted() : "??");
+                });
+            }
+        };
+        new Thread(task).start();
     }
+
+
 
 }
 

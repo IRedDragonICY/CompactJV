@@ -56,4 +56,5 @@
     <Button fx:id="decompressButton" text="Decompress" style="-fx-font-size: 20; -fx-text-fill: white;"/>
   </HBox>
 
+
 </AnchorPane>
