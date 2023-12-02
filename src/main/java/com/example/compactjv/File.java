@@ -1,11 +1,13 @@
 package com.example.compactjv;
 
 import java.io.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class File {
     private static final String CMD = "cmd.exe";
     private static final String START_COMMAND = "start /B " + CMD + " /c compact";
-    private static final String QUERY_COMMAND = "compact /Q /I /S:";
+    private static final String QUERY_COMMAND = "compact /Q /A /I /S:";
     private String filePath;
 
     public String getFilePath() {
@@ -25,7 +27,15 @@ public class File {
 
     public boolean isCompressed(String filePath) {
         String output = runCommandWithOutput(QUERY_COMMAND + "\"" + filePath + "\"");
-        return !output.contains("0 are compressed");
+        String Lines[] = output.split("\\n");
+        for (String line : Lines) {
+            if (line.contains(" are compressed")) {
+                String[] parts = line.split(" ");
+                Long total = Long.parseLong(parts[0].replace(".", ""));
+                return total != 0;
+            }
+        }
+        return false;
     }
 
     public Size calculateFolderSize(String filePath) {
@@ -55,6 +65,7 @@ public class File {
             String line;
             while ((line = reader.readLine()) != null) {
                 output.append(line).append("\n");
+//                System.out.println(line);
             }
         } catch (IOException e) {
             e.printStackTrace();
