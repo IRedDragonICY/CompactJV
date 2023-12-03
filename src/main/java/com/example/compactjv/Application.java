@@ -12,7 +12,7 @@ import java.io.IOException;
 public class Application extends javafx.application.Application {
     private static final String TITLE = "CompactJV";
     private static final String ICON_PATH = "/com/example/compactjv/app.png";
-    private static final String VIEW_PATH = "hello-view.fxml";
+    private static final String VIEW_PATH = "view.fxml";
     private static final String STYLE_PATH = "application.css";
     private static final double WINDOW_WIDTH = 500;
     private static final double WINDOW_HEIGHT = 780;
