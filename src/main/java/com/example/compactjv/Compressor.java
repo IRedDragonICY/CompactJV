@@ -5,10 +5,10 @@ public class Compressor {
     private CommandRunner commandRunner = new CommandRunner();
 
     public void compress(String filePath, String algorithm) {
-        commandRunner.runCommand(START_COMMAND + " /A /C /I /S /F /EXE:" + algorithm + " /s:\"" + filePath + "\"");
+        commandRunner.runCommand(START_COMMAND + " /A /C /I /S /F /EXE:" + algorithm + " /s:\"" + filePath + "\"", false);
     }
 
     public void decompress(String filePath) {
-        commandRunner.runCommand(START_COMMAND + " /U /I /A /F /s:\"" + filePath + "\"");
+        commandRunner.runCommand(START_COMMAND + " /U /I /A /F /s:\"" + filePath + "\"", false);
     }
 }

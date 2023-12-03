@@ -5,25 +5,21 @@ import java.io.*;
 public class CommandRunner {
     private static final String CMD = "cmd.exe";
 
-    public static void runCommand(String command) {
+    public static String runCommand(String command, boolean withOutput) {
+        StringBuilder output = new StringBuilder();
         try {
-            Process process = startCommandProcess(command);
-            drainCommandOutput(process);
+            ProcessBuilder processBuilder = new ProcessBuilder(CMD, "/c", command);
+            Process process = processBuilder.start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
             process.waitFor();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    public static String runCommandWithOutput(String command) {
-        StringBuilder output = new StringBuilder();
-        try {
-            Process process = startCommandProcess(command);
-            output.append(readCommandOutput(process));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return output.toString();
+        return withOutput ? output.toString() : null;
     }
 
     private static Process startCommandProcess(String command) throws IOException {

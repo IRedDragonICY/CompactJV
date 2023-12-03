@@ -39,7 +39,7 @@ public class File {
     }
 
     public boolean isCompressed(String filePath) {
-        String output = CommandRunner.runCommandWithOutput(QUERY_COMMAND + "\"" + filePath + "\"");
+        String output = CommandRunner.runCommand(QUERY_COMMAND + "\"" + filePath + "\"", true);
         String Lines[] = output.split("\\n");
         for (String line : Lines) {
             if (line.contains(" are compressed")) {
@@ -52,7 +52,7 @@ public class File {
     }
 
     public Size calculateFolderSize(String filePath) {
-        String output = CommandRunner.runCommandWithOutput(QUERY_COMMAND + "\"" + filePath + "\"");
+        String output = CommandRunner.runCommand(QUERY_COMMAND + "\"" + filePath + "\"", true);
         return getSizeFromOutput(output);
     }
 
@@ -71,7 +71,7 @@ public class File {
         return new Size(size, sizeOnDisk);
     }
     public void getTotalFolderCompressed(String filePath) {
-        String output = CommandRunner.runCommandWithOutput("compact /Q /A /I /S:\"" + filePath + "\"");
+        String output = CommandRunner.runCommand("compact /Q /A /I /S:\"" + filePath + "\"", true);
         String Lines[] = output.split("\\n");
         for (String line : Lines) {
             if (line.contains(" are compressed")) {
@@ -80,6 +80,7 @@ public class File {
                 Long totalDecompressed = Long.parseLong(parts[4].replace(".", ""));
                 setTotalCompressed(totalCompressed);
                 setTotalDecompressed(totalDecompressed);
+                break;
             }
         }
     }

@@ -1,26 +1,18 @@
 package com.example.compactjv;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import javafx.scene.Node;
-import javafx.scene.input.TransferMode;
-import javafx.scene.input.Dragboard;
-import javafx.scene.control.Label;
-import javafx.scene.control.ChoiceBox;
-import javafx.collections.FXCollections;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
-import javafx.event.ActionEvent;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.Future;
+
+import java.util.concurrent.*;
 
 public class Controller {
     @FXML
@@ -28,16 +20,13 @@ public class Controller {
     @FXML
     private TextField filePathField;
     @FXML
-    private Label currentSizeLabel, sizeOnDiskLabel;
+    private Label currentSizeLabel, sizeOnDiskLabel, compressionAlgorithmLabel, percentageLabel;
     @FXML
     private ChoiceBox<String> compressionAlgorithmChoiceBox;
-    @FXML
-    private Label compressionAlgorithmLabel;
-    @FXML
-    private Label percentageLabel;
+
     private File compact;
     private ExecutorServiceManager executorServiceManager;
-    private boolean isDialogOpen = false;
+
 
     public void initialize() {
         setupButtons();
@@ -50,18 +39,23 @@ public class Controller {
     private void setupButtons() {
         setButtonProperties(closeButton, "X", event -> Platform.exit());
         setButtonProperties(minimizeButton, "-", event -> ((Stage) ((Node) event.getSource()).getScene().getWindow()).setIconified(true));
-        setButtonProperties(compressButton, false, event -> handleCompressionOrDecompression(true));
-        setButtonProperties(decompressButton, false, event -> handleCompressionOrDecompression(false));
+        setupCompressionButton();
+        setupDecompressionButton();
         setLabelAndChoiceBoxVisibility(false);
+    }
+
+    private void setupCompressionButton() {
+        compressButton.setOnAction(event -> handleCompressionOrDecompression(true));
+        compressButton.setVisible(false);
+    }
+
+    private void setupDecompressionButton() {
+        decompressButton.setOnAction(event -> handleCompressionOrDecompression(false));
+        decompressButton.setVisible(false);
     }
 
     private void setButtonProperties(Button button, String text, EventHandler<ActionEvent> eventHandler) {
         button.setText(text);
-        button.setOnAction(eventHandler);
-    }
-
-    private void setButtonProperties(Button button, boolean visibility, EventHandler<ActionEvent> eventHandler) {
-        button.setVisible(visibility);
         button.setOnAction(eventHandler);
     }
 
@@ -85,14 +79,10 @@ public class Controller {
     }
 
     private void handleMouseClickedOnField(MouseEvent event) {
-        if (!isDialogOpen) {
-            isDialogOpen = true;
-            DirectoryChooser directoryChooser = new DirectoryChooser();
-            java.io.File selectedDirectory = directoryChooser.showDialog(null);
-            if (selectedDirectory != null) {
-                updateFilePath(selectedDirectory);
-            }
-            isDialogOpen = false;
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        java.io.File selectedDirectory = directoryChooser.showDialog(null);
+        if (selectedDirectory != null) {
+            updateFilePath(selectedDirectory);
         }
     }
 
@@ -127,7 +117,7 @@ public class Controller {
         disableButtons();
         Runnable task = createCompressionOrDecompressionTask(isCompression, filePath);
         Future<?> future = executorServiceManager.submitTask(task);
-        monitorTaskUntilCompletion(future, filePath);
+        monitorTaskUntilCompletion(future, filePath, isCompression);
     }
 
     private Runnable createCompressionOrDecompressionTask(boolean isCompression, String filePath) {
@@ -138,11 +128,17 @@ public class Controller {
             } else {
                 compact.decompress(filePath);
             }
-            Platform.runLater(this::updateButtonsAndLabels);
+            updateAfterTaskCompletion();
         };
     }
 
-
+    private void updateAfterTaskCompletion() {
+        Platform.runLater(() -> {
+            updateButtonsAndLabels();
+            enableButtons();
+            percentageLabel.setText("100.00%");
+        });
+    }
 
     private void updateSizeOnDiskLabel(String text) {
         sizeOnDiskLabel.setText(text);
@@ -153,29 +149,33 @@ public class Controller {
         decompressButton.setDisable(true);
     }
 
-    private void monitorTaskUntilCompletion(Future<?> future, String filePath) {
+    private void monitorTaskUntilCompletion(Future<?> future, String filePath, boolean isCompression) {
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.scheduleAtFixedRate(() -> {
             if(!future.isDone()) {
                 compact.getTotalFolderCompressed(filePath);
-                percentageLabelUpdate();
+                updatePercentageLabel(isCompression);
             }
-            else {
-                enableButtons();
-                executorService.shutdown();
-            }
+            executorService.shutdown();
         }, 0, 100, TimeUnit.MILLISECONDS);
     }
 
-    private void percentageLabelUpdate(){
+    private void updatePercentageLabel(boolean isCompression){
         long totalCompressed = compact.getTotalCompressed();
         long totalDecompressed = compact.getTotalDecompressed();
         long total = totalCompressed + totalDecompressed;
-        if(total != 0) {
-            double percentage = (double) totalCompressed / total * 100;
-            Platform.runLater(() -> percentageLabel.setText(String.format("%.2f", percentage) + "%"));
+        double percentage = calculatePercentage(totalCompressed, totalDecompressed, total, isCompression);
+        Platform.runLater(() -> percentageLabel.setText(String.format("%.2f", percentage) + "%"));
+    }
+
+    private double calculatePercentage(long totalCompressed, long totalDecompressed, long total, boolean isCompression) {
+        if (isCompression) {
+            return (double) totalCompressed / total * 100;
+        } else {
+            return (double) totalDecompressed / total * 100;
         }
     }
+
     private void enableButtons() {
         compressButton.setDisable(false);
         decompressButton.setDisable(false);
@@ -188,27 +188,38 @@ public class Controller {
 
     private void updateButtonsAndLabels() {
         String filePath = compact.getFilePath();
-        compressButton.setDisable(true);
-        decompressButton.setDisable(true);
+        disableButtons();
         currentSizeLabel.setText("Loading...");
         sizeOnDiskLabel.setText("Loading...");
+        setLabelAndChoiceBoxVisibility(false);
+        if (compact.isValidDirectory(filePath)) {
+            prepareFolder(filePath);
+        }
+    }
+
+    private void prepareFolder(String filePath) {
         Runnable task = () -> {
             boolean isCompressed = compact.isCompressed(filePath);
-            if (compact.isValidDirectory(filePath)) {
-                Size size = compact.calculateFolderSize(filePath);
-                Platform.runLater(() -> {
-                    compressButton.setDisable(false);
-                    decompressButton.setDisable(false);
-                    decompressButton.setVisible(isCompressed);
-                    compressButton.setVisible(!filePath.isEmpty());
-                    compressionAlgorithmLabel.setVisible(!filePath.isEmpty());
-                    compressionAlgorithmChoiceBox.setVisible(!filePath.isEmpty());
-                    compressButton.setText(isCompressed ? "Compress Again" : "Compress");
-                    currentSizeLabel.setText(size.getSizeFormatted());
-                    sizeOnDiskLabel.setText(isCompressed ? size.getSizeOnDiskFormatted() : "??");
-                });
-            }
+            Size size = compact.calculateFolderSize(filePath);
+            updateUIAfterFolderPreparation(isCompressed, size);
         };
         new Thread(task).start();
+    }
+
+    private void updateUIAfterFolderPreparation(boolean isCompressed, Size size) {
+        Platform.runLater(() -> {
+            updateButtonVisibilityAndText(isCompressed);
+            currentSizeLabel.setText(size.getSizeFormatted());
+            sizeOnDiskLabel.setText(isCompressed ? size.getSizeOnDiskFormatted() : "??");
+            setLabelAndChoiceBoxVisibility(true);
+        });
+    }
+
+    private void updateButtonVisibilityAndText(boolean isCompressed) {
+        compressButton.setDisable(false);
+        decompressButton.setDisable(false);
+        decompressButton.setVisible(isCompressed);
+        compressButton.setVisible(true);
+        compressButton.setText(isCompressed ? "Compress Again" : "Compress");
     }
 }
