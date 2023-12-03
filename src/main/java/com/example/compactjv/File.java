@@ -1,14 +1,14 @@
 package com.example.compactjv;
 
 import java.io.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 public class File {
     private static final String CMD = "cmd.exe";
-    private static final String START_COMMAND = "start /B " + CMD + " /c compact";
     private static final String QUERY_COMMAND = "compact /Q /A /I /S:";
     private String filePath;
+
+    private Compressor compressor = new Compressor();
 
     public String getFilePath() {
         return filePath;
@@ -18,11 +18,11 @@ public class File {
     }
 
     public void compress(String filePath, String algorithm) {
-        runCommand(START_COMMAND + " /A /C /I /S /F /EXE:" + algorithm + " /s:\"" + filePath + "\"");
+        compressor.compress(filePath, algorithm);
     }
 
     public void decompress(String filePath) {
-        runCommand(START_COMMAND + " /U /I /A /F /s:\"" + filePath + "\"");
+        compressor.decompress(filePath);
     }
 
     public boolean isCompressed(String filePath) {
@@ -65,7 +65,7 @@ public class File {
             String line;
             while ((line = reader.readLine()) != null) {
                 output.append(line).append("\n");
-//                System.out.println(line);
+                System.out.println(line);
             }
         } catch (IOException e) {
             e.printStackTrace();

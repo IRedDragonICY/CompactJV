@@ -15,27 +15,23 @@ import javafx.collections.FXCollections;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.event.ActionEvent;
 
 public class Controller {
     @FXML
     private Button closeButton, minimizeButton, compressButton, decompressButton;
-
     @FXML
     private TextField filePathField;
-
     @FXML
     private Label currentSizeLabel, sizeOnDiskLabel;
-
     @FXML
     private ChoiceBox<String> compressionAlgorithmChoiceBox;
-
     @FXML
     private Label compressionAlgorithmLabel;
 
     private File compact;
-
     private ExecutorServiceManager executorServiceManager;
-
     private boolean isDialogOpen = false;
 
     public void initialize() {
@@ -47,20 +43,26 @@ public class Controller {
     }
 
     private void setupButtons() {
-        closeButton.setText("X");
-        closeButton.setOnAction(event -> Platform.exit());
+        setButtonProperties(closeButton, "X", event -> Platform.exit());
+        setButtonProperties(minimizeButton, "-", event -> ((Stage) ((Node) event.getSource()).getScene().getWindow()).setIconified(true));
+        setButtonProperties(compressButton, false, event -> handleCompressionOrDecompression(true));
+        setButtonProperties(decompressButton, false, event -> handleCompressionOrDecompression(false));
+        setLabelAndChoiceBoxVisibility(false);
+    }
 
-        minimizeButton.setText("-");
-        minimizeButton.setOnAction(event -> ((Stage) ((Node) event.getSource()).getScene().getWindow()).setIconified(true));
+    private void setButtonProperties(Button button, String text, EventHandler<ActionEvent> eventHandler) {
+        button.setText(text);
+        button.setOnAction(eventHandler);
+    }
 
-        compressButton.setVisible(false);
-        compressButton.setOnAction(event -> handleCompressionOrDecompression(true));
+    private void setButtonProperties(Button button, boolean visibility, EventHandler<ActionEvent> eventHandler) {
+        button.setVisible(visibility);
+        button.setOnAction(eventHandler);
+    }
 
-        decompressButton.setVisible(false);
-        decompressButton.setOnAction(event -> handleCompressionOrDecompression(false));
-
-        compressionAlgorithmLabel.setVisible(false);
-        compressionAlgorithmChoiceBox.setVisible(false);
+    private void setLabelAndChoiceBoxVisibility(boolean visibility) {
+        compressionAlgorithmLabel.setVisible(visibility);
+        compressionAlgorithmChoiceBox.setVisible(visibility);
     }
 
     private void setupFilePathField() {
@@ -78,16 +80,13 @@ public class Controller {
     }
 
     private void handleMouseClickedOnField(MouseEvent event) {
-        try {
-            if (!isDialogOpen) {
-                isDialogOpen = true;
-                DirectoryChooser directoryChooser = new DirectoryChooser();
-                java.io.File selectedDirectory = directoryChooser.showDialog(null);
-                if (selectedDirectory != null) {
-                    updateFilePath(selectedDirectory);
-                }
+        if (!isDialogOpen) {
+            isDialogOpen = true;
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            java.io.File selectedDirectory = directoryChooser.showDialog(null);
+            if (selectedDirectory != null) {
+                updateFilePath(selectedDirectory);
             }
-        } finally {
             isDialogOpen = false;
         }
     }
@@ -119,6 +118,7 @@ public class Controller {
 
     private void handleCompressionOrDecompression(boolean compression) {
         String filePath = compact.getFilePath();
+        sizeOnDiskLabel.setText("Loading...");
         Runnable task = () -> {
             if (compression) {
                 String algorithm = compressionAlgorithmChoiceBox.getValue();
@@ -148,7 +148,6 @@ public class Controller {
         decompressButton.setDisable(true);
         currentSizeLabel.setText("Loading...");
         sizeOnDiskLabel.setText("Loading...");
-        System.out.println("test");
         Runnable task = () -> {
             boolean isCompressed = compact.isCompressed(filePath);
             if (compact.isValidDirectory(filePath)) {
@@ -168,7 +167,4 @@ public class Controller {
         };
         new Thread(task).start();
     }
-
-
 }
-

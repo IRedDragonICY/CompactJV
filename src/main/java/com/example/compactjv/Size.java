@@ -1,6 +1,6 @@
 package com.example.compactjv;
 
-public class Size extends File {
+public class Size {
     private static final int SIZE_KB = 1024;
     private static final int SIZE_MB = SIZE_KB * 1024;
     private static final int SIZE_GB = SIZE_MB * 1024;
