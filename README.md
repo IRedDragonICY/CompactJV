@@ -5,7 +5,7 @@
 ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
 [![Visitor](http://hits.dwyl.com/IRedDragonICY/CompactJV.svg)](http://hits.dwyl.com/IRedDragonICY/CompactJV)
 
-CompactJV is a project inspired by the efficient design and functionality of CompactGUI. It strives to provide a similar user experience, with its own unique features and improvements with Java language.
+CompactJV is a compression tool using Compact.exe from Windows SDK to Files like games of application. This tool is developed using Java language and is intended to be used on Windows operating system.
 
 ## Getting Started
 
@@ -50,5 +50,4 @@ This project is licensed under the MIT License. For more information, see the `L
 
 ## Acknowledgements
 
-- **CompactGUI**, for inspiring the creation of this project.
 - **Faisal Fajri Rahani S.Si., M.Cs.**, for his guidance and support.
