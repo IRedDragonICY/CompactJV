@@ -56,5 +56,17 @@
     <Button fx:id="decompressButton" text="Decompress" style="-fx-font-size: 20; -fx-text-fill: white;"/>
   </HBox>
 
+  <HBox alignment="CENTER" spacing="50"
+        AnchorPane.bottomAnchor="50"
+        AnchorPane.leftAnchor="50"
+        AnchorPane.rightAnchor="50"
+        AnchorPane.topAnchor="400"
+        mouseTransparent="true">
+    <children>
+      <Label fx:id="percentageLabel" text="0%" style="-fx-font-size: 20; -fx-text-fill: white;"/>
+    </children>
+  </HBox>
+
+
 
 </AnchorPane>

@@ -17,6 +17,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.event.ActionEvent;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.Future;
 
 public class Controller {
     @FXML
@@ -29,7 +33,8 @@ public class Controller {
     private ChoiceBox<String> compressionAlgorithmChoiceBox;
     @FXML
     private Label compressionAlgorithmLabel;
-
+    @FXML
+    private Label percentageLabel;
     private File compact;
     private ExecutorServiceManager executorServiceManager;
     private boolean isDialogOpen = false;
@@ -116,25 +121,64 @@ public class Controller {
         updateButtonsAndLabels();
     }
 
-    private void handleCompressionOrDecompression(boolean compression) {
+    private void handleCompressionOrDecompression(boolean isCompression) {
         String filePath = compact.getFilePath();
-        sizeOnDiskLabel.setText("Loading...");
-        Runnable task = () -> {
-            if (compression) {
+        updateSizeOnDiskLabel("Loading...");
+        disableButtons();
+        Runnable task = createCompressionOrDecompressionTask(isCompression, filePath);
+        Future<?> future = executorServiceManager.submitTask(task);
+        monitorTaskUntilCompletion(future, filePath);
+    }
+
+    private Runnable createCompressionOrDecompressionTask(boolean isCompression, String filePath) {
+        return () -> {
+            if (isCompression) {
                 String algorithm = compressionAlgorithmChoiceBox.getValue();
                 compact.compress(filePath, algorithm);
             } else {
                 compact.decompress(filePath);
             }
-            Platform.runLater(() -> {
-                updateButtonsAndLabels();
-                compressButton.setDisable(false);
-                decompressButton.setDisable(false);
-            });
+            Platform.runLater(this::updateButtonsAndLabels);
         };
+    }
+
+
+
+    private void updateSizeOnDiskLabel(String text) {
+        sizeOnDiskLabel.setText(text);
+    }
+
+    private void disableButtons() {
         compressButton.setDisable(true);
         decompressButton.setDisable(true);
-        executorServiceManager.executeTask(task);
+    }
+
+    private void monitorTaskUntilCompletion(Future<?> future, String filePath) {
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleAtFixedRate(() -> {
+            if(!future.isDone()) {
+                compact.getTotalFolderCompressed(filePath);
+                percentageLabelUpdate();
+            }
+            else {
+                enableButtons();
+                executorService.shutdown();
+            }
+        }, 0, 100, TimeUnit.MILLISECONDS);
+    }
+
+    private void percentageLabelUpdate(){
+        long totalCompressed = compact.getTotalCompressed();
+        long totalDecompressed = compact.getTotalDecompressed();
+        long total = totalCompressed + totalDecompressed;
+        if(total != 0) {
+            double percentage = (double) totalCompressed / total * 100;
+            Platform.runLater(() -> percentageLabel.setText(String.format("%.2f", percentage) + "%"));
+        }
+    }
+    private void enableButtons() {
+        compressButton.setDisable(false);
+        decompressButton.setDisable(false);
     }
 
     private void updateFilePath(java.io.File file) {

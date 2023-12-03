@@ -7,7 +7,8 @@ public class File {
     private static final String CMD = "cmd.exe";
     private static final String QUERY_COMMAND = "compact /Q /A /I /S:";
     private String filePath;
-
+    private Long totalCompressed;
+    private Long totalDecompressed;
     private Compressor compressor = new Compressor();
 
     public String getFilePath() {
@@ -15,6 +16,18 @@ public class File {
     }
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+    public Long getTotalCompressed() {
+        return totalCompressed;
+    }
+    public void setTotalCompressed(Long totalCompressed) {
+        this.totalCompressed = totalCompressed;
+    }
+    public Long getTotalDecompressed() {
+        return totalDecompressed;
+    }
+    public void setTotalDecompressed(Long totalDecompressed) {
+        this.totalDecompressed = totalDecompressed;
     }
 
     public void compress(String filePath, String algorithm) {
@@ -26,7 +39,7 @@ public class File {
     }
 
     public boolean isCompressed(String filePath) {
-        String output = runCommandWithOutput(QUERY_COMMAND + "\"" + filePath + "\"");
+        String output = CommandRunner.runCommandWithOutput(QUERY_COMMAND + "\"" + filePath + "\"");
         String Lines[] = output.split("\\n");
         for (String line : Lines) {
             if (line.contains(" are compressed")) {
@@ -39,38 +52,8 @@ public class File {
     }
 
     public Size calculateFolderSize(String filePath) {
-        String output = runCommandWithOutput(QUERY_COMMAND + "\"" + filePath + "\"");
+        String output = CommandRunner.runCommandWithOutput(QUERY_COMMAND + "\"" + filePath + "\"");
         return getSizeFromOutput(output);
-    }
-
-    private void runCommand(String command) {
-        ProcessBuilder processBuilder = new ProcessBuilder(CMD, "/c", command);
-        try {
-            Process process = processBuilder.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            while (reader.readLine() != null) {
-            }
-            process.waitFor();
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private String runCommandWithOutput(String command) {
-        ProcessBuilder processBuilder = new ProcessBuilder(CMD, "/c", command);
-        StringBuilder output = new StringBuilder();
-        try {
-            Process process = processBuilder.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line).append("\n");
-                System.out.println(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return output.toString();
     }
 
     private Size getSizeFromOutput(String output) {
@@ -87,6 +70,20 @@ public class File {
         }
         return new Size(size, sizeOnDisk);
     }
+    public void getTotalFolderCompressed(String filePath) {
+        String output = CommandRunner.runCommandWithOutput("compact /Q /A /I /S:\"" + filePath + "\"");
+        String Lines[] = output.split("\\n");
+        for (String line : Lines) {
+            if (line.contains(" are compressed")) {
+                String[] parts = line.split(" ");
+                Long totalCompressed = Long.parseLong(parts[0].replace(".", ""));
+                Long totalDecompressed = Long.parseLong(parts[4].replace(".", ""));
+                setTotalCompressed(totalCompressed);
+                setTotalDecompressed(totalDecompressed);
+            }
+        }
+    }
+
     public boolean isValidDirectory(String path) {
         if (path != null && !path.isEmpty()) {
             java.io.File file = new java.io.File(path);
