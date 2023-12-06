@@ -10,6 +10,8 @@ public class File {
     private Long totalCompressed;
     private Long totalDecompressed;
     private Compressor compressor = new Compressor();
+    private int indexOfCompressed = 0;
+    private int indexOfDecompressed = 4;
 
     public String getFilePath() {
         return filePath;
@@ -76,8 +78,8 @@ public class File {
         for (String line : Lines) {
             if (line.contains(" are compressed")) {
                 String[] parts = line.split(" ");
-                Long totalCompressed = Long.parseLong(parts[0].replace(".", ""));
-                Long totalDecompressed = Long.parseLong(parts[4].replace(".", ""));
+                Long totalCompressed = Long.parseLong(parts[indexOfCompressed].replace(".", ""));
+                Long totalDecompressed = Long.parseLong(parts[indexOfDecompressed].replace(".", ""));
                 setTotalCompressed(totalCompressed);
                 setTotalDecompressed(totalDecompressed);
                 break;

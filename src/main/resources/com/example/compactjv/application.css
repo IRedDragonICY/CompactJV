@@ -17,7 +17,6 @@
 #minimizeButton {
     -fx-font-size: 18px;
     -fx-text-fill: #ffffff;
-    -fx-background-radius: 0 15 0 5;
     -fx-background-color: transparent;
 }
 
@@ -32,6 +31,7 @@
     -fx-background-radius: 10;
 }
 
+
 #filePathField:hover {
-    -fx-background-color: #cccccc;
+    -fx-background-color: #f2f2f2;
 }

@@ -11,6 +11,8 @@ import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Tooltip;
 
 import java.util.concurrent.*;
 
@@ -23,7 +25,8 @@ public class Controller {
     private Label currentSizeLabel, sizeOnDiskLabel, compressionAlgorithmLabel, percentageLabel;
     @FXML
     private ChoiceBox<String> compressionAlgorithmChoiceBox;
-
+    @FXML
+    private ProgressBar progressBar;
     private File compact;
     private ExecutorServiceManager executorServiceManager;
 
@@ -66,18 +69,42 @@ public class Controller {
 
     private void setupFilePathField() {
         filePathField.setEditable(false);
-        filePathField.setText("Drag and Drop here");
         filePathField.setOnMouseClicked(this::handleMouseClickedOnField);
         filePathField.setOnDragOver(this::handleDragOverField);
         filePathField.setOnDragDropped(this::handleDragDroppedOnField);
-        filePathField.textProperty().addListener(this::handleFieldTextChanged);
+        filePathField.textProperty().addListener(this::FieldTextHasChanged);
     }
 
     private void setupCompressionAlgorithmChoiceBox() {
         compressionAlgorithmChoiceBox.setItems(FXCollections.observableArrayList("XPRESS4K", "XPRESS8K", "XPRESS16K", "LZX"));
         compressionAlgorithmChoiceBox.setValue("XPRESS4K");
-    }
+        addToolTipsToChoiceBoxItems();
 
+    }
+    private void addToolTipsToChoiceBoxItems() {
+        Tooltip tooltipXPRESS4K = new Tooltip("Fastest, but weakest");
+        Tooltip tooltipXPRESS8K = new Tooltip("Reasonable balance between speed and compression");
+        Tooltip tooltipXPRESS16K = new Tooltip("Slower, but stronger");
+        Tooltip tooltipLZX = new Tooltip("Slowest, but strongest - note it has a higher overhead, so use it on programs/games only if your CPU is reasonably strong or the program/game is older.");
+
+        compressionAlgorithmChoiceBox.setTooltip(tooltipXPRESS4K);
+        compressionAlgorithmChoiceBox.setOnShowing(event -> {
+            switch (compressionAlgorithmChoiceBox.getValue()) {
+                case "XPRESS4K":
+                    compressionAlgorithmChoiceBox.setTooltip(tooltipXPRESS4K);
+                    break;
+                case "XPRESS8K":
+                    compressionAlgorithmChoiceBox.setTooltip(tooltipXPRESS8K);
+                    break;
+                case "XPRESS16K":
+                    compressionAlgorithmChoiceBox.setTooltip(tooltipXPRESS16K);
+                    break;
+                case "LZX":
+                    compressionAlgorithmChoiceBox.setTooltip(tooltipLZX);
+                    break;
+            }
+        });
+    }
     private void handleMouseClickedOnField(MouseEvent event) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         java.io.File selectedDirectory = directoryChooser.showDialog(null);
@@ -107,7 +134,7 @@ public class Controller {
         event.consume();
     }
 
-    private void handleFieldTextChanged(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+    private void FieldTextHasChanged(ObservableValue<? extends String> observable, String oldValue, String newValue) {
         updateButtonsAndLabels();
     }
 
@@ -136,7 +163,6 @@ public class Controller {
         Platform.runLater(() -> {
             updateButtonsAndLabels();
             enableButtons();
-            percentageLabel.setText("100.00%");
         });
     }
 
@@ -150,14 +176,22 @@ public class Controller {
     }
 
     private void monitorTaskUntilCompletion(Future<?> future, String filePath, boolean isCompression) {
-        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(() -> {
-            if(!future.isDone()) {
-                compact.getTotalFolderCompressed(filePath);
-                updatePercentageLabel(isCompression);
-            }
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        try {
+            executorService.submit(() -> {
+                while (!future.isDone()) {
+                    compact.getTotalFolderCompressed(filePath);
+                    updatePercentageLabel(isCompression);
+                }
+
+                Platform.runLater(() -> {
+                    percentageLabel.setText("100%");
+                    progressBar.setProgress(1);
+                });
+            });
+        } finally {
             executorService.shutdown();
-        }, 0, 100, TimeUnit.MILLISECONDS);
+        }
     }
 
     private void updatePercentageLabel(boolean isCompression){
@@ -165,7 +199,10 @@ public class Controller {
         long totalDecompressed = compact.getTotalDecompressed();
         long total = totalCompressed + totalDecompressed;
         double percentage = calculatePercentage(totalCompressed, totalDecompressed, total, isCompression);
-        Platform.runLater(() -> percentageLabel.setText(String.format("%.2f", percentage) + "%"));
+        Platform.runLater(() -> {
+            percentageLabel.setText(String.format("%.2f", percentage) + "%");
+            progressBar.setProgress(percentage / 100);
+        });
     }
 
     private double calculatePercentage(long totalCompressed, long totalDecompressed, long total, boolean isCompression) {
