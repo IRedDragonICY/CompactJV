@@ -65,7 +65,7 @@
         mouseTransparent="true">
     <children>
       <Label fx:id="percentageLabel" text="0%" style="-fx-font-size: 20; -fx-text-fill: white;"/>
-
+        <ProgressBar fx:id="progressBar" prefWidth="200" prefHeight="20"/>
     </children>
   </HBox>
 
