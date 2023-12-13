@@ -13,12 +13,14 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.util.concurrent.*;
 
 public class Controller {
     @FXML
-    private Button closeButton, minimizeButton, compressButton, decompressButton;
+    private Button closeButton, minimizeButton, compressButton, decompressButton, settingsButton;
     @FXML
     private TextField filePathField;
     @FXML
@@ -40,8 +42,8 @@ public class Controller {
     }
 
     private void setupButtons() {
-        setButtonProperties(closeButton, "X", event -> Platform.exit());
-        setButtonProperties(minimizeButton, "-", event -> ((Stage) ((Node) event.getSource()).getScene().getWindow()).setIconified(true));
+        setButtonProperties(closeButton, event -> Platform.exit());
+        setButtonProperties(minimizeButton, event -> ((Stage) ((Node) event.getSource()).getScene().getWindow()).setIconified(true));
         setupCompressionButton();
         setupDecompressionButton();
         setLabelAndChoiceBoxVisibility(false);
@@ -57,8 +59,8 @@ public class Controller {
         decompressButton.setVisible(false);
     }
 
-    private void setButtonProperties(Button button, String text, EventHandler<ActionEvent> eventHandler) {
-        button.setText(text);
+
+    private void setButtonProperties(Button button, EventHandler<ActionEvent> eventHandler) {
         button.setOnAction(eventHandler);
     }
 

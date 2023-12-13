@@ -13,9 +13,6 @@ public class Application extends javafx.application.Application {
     private static final String TITLE = "CompactJV";
     private static final String ICON_PATH = "/com/example/compactjv/app.png";
     private static final String VIEW_PATH = "view.fxml";
-    private static final String STYLE_PATH = "application.css";
-    private static final double WINDOW_WIDTH = 500;
-    private static final double WINDOW_HEIGHT = 780;
 
     private double xOffset = 0;
     private double yOffset = 0;
@@ -24,9 +21,7 @@ public class Application extends javafx.application.Application {
     public void start(Stage stage) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(VIEW_PATH));
-            Scene scene = new Scene(fxmlLoader.load(), WINDOW_WIDTH, WINDOW_HEIGHT);
-
-            scene.getStylesheets().add(getClass().getResource(STYLE_PATH).toExternalForm());
+            Scene scene = new Scene(fxmlLoader.load());
 
             stage.initStyle(StageStyle.TRANSPARENT);
             scene.setFill(Color.TRANSPARENT);
