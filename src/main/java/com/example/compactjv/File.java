@@ -40,6 +40,18 @@ public class File {
         compressor.decompress(filePath);
     }
 
+    public static String getCPUUsage() {
+        String output = CommandRunner.runCommand("wmic cpu get loadpercentage", true);
+        String[] lines = output.split("\n");
+        if(lines.length < 3) {
+            return "0";
+        }
+        String[] parts = lines[2].split("\\s+");
+        if (parts.length == 0 || parts[0].isEmpty()) {
+            return "0";
+        }
+        return parts[0];
+    }
     public boolean isCompressed(String filePath) {
         String output = CommandRunner.runCommand(QUERY_COMMAND + "\"" + filePath + "\"", true);
         String Lines[] = output.split("\\n");

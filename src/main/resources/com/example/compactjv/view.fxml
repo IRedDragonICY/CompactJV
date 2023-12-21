@@ -1,66 +1,152 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="root" prefHeight="780" prefWidth="500" style="-fx-background-color: #121212;" stylesheets="@application.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.compactjv.Controller">
+<AnchorPane id="root" prefHeight="720" prefWidth="1200" style="-fx-background-color: #121212;" stylesheets="@application.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.compactjv.Controller">
 
   <children>
-      <Rectangle fx:id="roundedRectangle21" arcHeight="10.0" arcWidth="10.0" fill="#3b3b3bf2" height="97.0" layoutX="259.0" layoutY="584.0" stroke="BLACK" strokeWidth="0.0" width="214.0" />
-    <Rectangle fx:id="roundedRectangle" arcHeight="10.0" arcWidth="10.0" fill="#3b3b3bf2" height="177.0" layoutX="18.0" layoutY="390.0" stroke="BLACK" strokeWidth="0.0" width="214.0" />
-      <Rectangle fx:id="roundedRectangle1" arcHeight="10.0" arcWidth="10.0" fill="#3b3b3b" height="177.0" layoutX="259.0" layoutY="390.0" stroke="#000000" strokeWidth="0.0" width="214.0" />
-    <HBox AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
-      <children>
-        <Button fx:id="minimizeButton" style="-fx-background-color: transparent;" text="-">
-        </Button>
-        <Button fx:id="closeButton" style="-fx-background-color: transparent;" text="x">
-        </Button>
-      </children>
-    </HBox>
+      <Rectangle fx:id="roundedRectangle1" arcHeight="10.0" arcWidth="10.0" fill="#3b3b3b" height="200.0" layoutX="322.0" layoutY="291.0" stroke="#000000" strokeWidth="0.0" width="200.0" />
+      <Rectangle fx:id="roundedRectangle12" arcHeight="10.0" arcWidth="10.0" fill="#3b3b3b" height="200.0" layoutX="98.0" layoutY="291.0" stroke="#000000" strokeWidth="0.0" width="200.0" />
+      <Rectangle fx:id="roundedRectangle131" arcHeight="10.0" arcWidth="10.0" fill="#3b3b3b" height="100.0" layoutX="98.0" layoutY="514.0" stroke="#000000" strokeWidth="0.0" width="425.0" />
+      <Rectangle fx:id="roundedRectangle141" arcHeight="10.0" arcWidth="10.0" fill="#3b3b3b" height="200.0" layoutX="980.0" layoutY="70.0" stroke="#000000" strokeWidth="0.0" width="200.0" />
+      <Rectangle fx:id="roundedRectangle142" arcHeight="10.0" arcWidth="10.0" fill="#3b3b3b" height="200.0" layoutX="544.0" layoutY="70.0" stroke="#000000" strokeWidth="0.0" width="200.0" />
+      <Rectangle fx:id="roundedRectangle1411" arcHeight="10.0" arcWidth="10.0" fill="#3b3b3b" height="200.0" layoutX="762.0" layoutY="70.0" stroke="#000000" strokeWidth="0.0" width="200.0" />
+      <Rectangle fx:id="roundedRectangle14111" arcHeight="10.0" arcWidth="10.0" fill="#3b3b3b" height="420.0" layoutX="762.0" layoutY="290.0" stroke="#000000" strokeWidth="0.0" width="420.0" />
+    <HBox layoutX="1297.0" layoutY="-82.0" AnchorPane.rightAnchor="-140.0" AnchorPane.topAnchor="-82.0" />
 
-    <TextField id="filePathField" fx:id="filePathField" alignment="CENTER" layoutX="54.0" layoutY="152.0" prefHeight="59.0" prefWidth="392.0" style="-fx-background-color: #FFFFF; -fx-background-radius: 10;" text="Drag and drop file here">
-         <font>
-            <Font size="31.0" />
-         </font></TextField>
-  <Button fx:id="compressButton" layoutX="76.0" layoutY="693.0" prefHeight="66.0" prefWidth="174.0" style="-fx-font-size: 20; -fx-text-fill: #ffffff; -fx-background-color: #627D98; -fx-background-radius: 50 0 0 50;" text="Compress">
+      <HBox alignment="CENTER" spacing="10" />
+  <Button fx:id="compressButton" layoutX="97.0" layoutY="629.0" prefHeight="66.0" prefWidth="200.0" style="-fx-font-size: 20; -fx-text-fill: #ffffff; -fx-background-color: #627D98; -fx-background-radius: 5 5 5 5;" text="Compress">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
       </Button>
-  <Button fx:id="decompressButton" layoutX="257.0" layoutY="693.0" prefHeight="66.0" prefWidth="174.0" style="-fx-font-size: 20; -fx-text-fill: #ffffff; -fx-background-color: #627D98; -fx-background-radius: 0 50 50 0;" text="Decompress">
+  <Button fx:id="decompressButton" layoutX="322.0" layoutY="629.0" prefHeight="66.0" prefWidth="200.0" style="-fx-font-size: 20; -fx-text-fill: #ffffff; -fx-background-color: #627D98; -fx-background-radius: 5 5 5 5;" text="Decompress">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
       </Button>
-    <Label fx:id="percentageLabel" layoutX="144.0" layoutY="239.0" style="-fx-font-size: 20;" text="0%" textFill="WHITE" />
-    <ProgressBar fx:id="progressBar" layoutX="222.0" layoutY="244.0" prefHeight="20" prefWidth="200" />
- <Label layoutX="37.0" layoutY="400.0" style="-fx-font-size: 20;" text="Current Size" textFill="#9e9e9e" />
- <Label fx:id="currentSizeLabel" alignment="CENTER" layoutX="19.0" layoutY="441.0" prefHeight="109.0" prefWidth="214.0" text="??? MB" textAlignment="CENTER" textFill="WHITE">
+    <Label fx:id="percentageLabel" layoutX="258.0" layoutY="23.0" style="-fx-font-size: 20;" text="0%" textFill="WHITE" />
+      <ProgressBar fx:id="progressBar" layoutX="299.0" layoutY="25.0" prefHeight="20" prefWidth="775.0" />
+ <Label layoutX="110.0" layoutY="307.0" style="-fx-font-size: 20;" text="Current Size" textFill="#9e9e9e">
          <font>
-            <Font size="41.0" />
+            <Font name="Segoe UI" size="12.0" />
+         </font></Label>
+ <Label fx:id="currentSizeLabel" alignment="CENTER" layoutX="98.0" layoutY="368.0" prefHeight="59.0" prefWidth="200.0" text="??? MB" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font name="Segoe UI Black" size="32.0" />
          </font>
       </Label>
- <Label layoutX="268.0" layoutY="400.0" style="-fx-font-size: 20;" text="Estimated Size" textFill="#9e9e9e" />
- <Label fx:id="sizeOnDiskLabel" alignment="CENTER" layoutX="260.0" layoutY="466.0" prefHeight="59.0" prefWidth="214.0" text="??? MB" textFill="WHITE">
+ <Label layoutX="334.0" layoutY="307.0" style="-fx-font-size: 20;" text="Estimated Size" textFill="#9e9e9e">
          <font>
-            <Font size="41.0" />
+            <Font name="Segoe UI" size="12.0" />
+         </font></Label>
+ <Label fx:id="sizeOnDiskLabel" alignment="CENTER" layoutX="324.0" layoutY="369.0" prefHeight="59.0" prefWidth="200.0" text="??? MB" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font name="Segoe UI Black" size="32.0" />
          </font>
       </Label>
-  <ChoiceBox fx:id="compressionAlgorithmChoiceBox" layoutX="292.0" layoutY="625.0" prefHeight="47.0" prefWidth="150.0" style="-fx-font-size: 12; -fx-text-fill: #ffffff;" />
-  <Label fx:id="compressionAlgorithmLabel" layoutX="269.0" layoutY="600.0" text="Compression Algorithm:" textFill="#9e9e9e">
+      <ChoiceBox fx:id="compressionAlgorithmChoiceBox" layoutX="105.0" layoutY="521.0" prefHeight="86.0" prefWidth="417.0" style="-fx-background-color: transparent; -fx-text-fill: white;">
+          <items>
+              <FXCollections fx:factory="observableArrayList">
+                  <String fx:value="XPRESS4K" />
+                  <String fx:value="XPRESS8K" />
+                  <String fx:value="XPRESS16K" />
+                  <String fx:value="LZX" />
+              </FXCollections>
+          </items>
+          <value>
+              <String fx:value="XPRESS4K" />
+          </value>
+      </ChoiceBox>
+      <Label fx:id="compressionAlgorithmLabel" layoutX="109.0" layoutY="527.0" text="Compression Algorithm:" textFill="#9e9e9e">
          <font>
             <Font size="14.0" />
          </font></Label>
-      <Rectangle fx:id="roundedRectangle2" arcHeight="10.0" arcWidth="10.0" fill="#3b3b3bf2" height="97.0" layoutX="19.0" layoutY="584.0" stroke="BLACK" strokeWidth="0.0" width="214.0" />
-      <Label layoutX="38.0" layoutY="595.0" style="-fx-font-size: 20;" text="Total Folder" textFill="#9e9e9e" />
+      <Label layoutX="992.0" layoutY="83.0" prefHeight="24.0" prefWidth="120.0" style="-fx-font-size: 20;" text="Total Folder" textFill="#9e9e9e" />
+      <AnchorPane prefHeight="720.0" prefWidth="65.0" style="-fx-background-color: #3b3b3b; -fx-background-radius: 15 0 0 15;">
+         <children>
+             <Button fx:id="informationButton" layoutX="13.0" layoutY="666.0" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: transparent; -fx-padding: 0;">
+                 <graphic>
+                     <ImageView fitHeight="40.0" fitWidth="40.0">
+                         <Image fx:id="infoImage" url="@imgs/information-button.png" />
+                     </ImageView>
+                 </graphic>
+             </Button>
+            <ImageView fitHeight="29.0" fitWidth="27.0" layoutX="19.0" layoutY="73.0">
+               <image>
+                  <Image url="@imgs/home.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="27.0" fitWidth="25.0" layoutX="20.0" layoutY="21.0">
+               <image>
+                  <Image url="@imgs/hamburger.png" />
+               </image>
+            </ImageView>
+
+
+
+         </children></AnchorPane>
+  <Button fx:id="minimizeButton" layoutX="1100.0" layoutY="3.0" style="-fx-background-color: transparent;" text="-" textFill="WHITE">
+         <font>
+            <Font name="Segoe UI Black" size="24.0" />
+         </font>
+      </Button>
+  <Button fx:id="closeButton" layoutX="1139.0" layoutY="3.0" style="-fx-background-color: transparent;" text="x" textFill="WHITE">
+         <font>
+            <Font name="Segoe UI Black" size="24.0" />
+         </font>
+      </Button>
+      <Label layoutX="553.0" layoutY="83.0" style="-fx-font-size: 20;" text="CPU Usage" textFill="#9e9e9e" />
+      <Label layoutX="89.0" layoutY="18.0" prefHeight="35.0" prefWidth="150.0" text="CompactJV" textFill="WHITE">
+         <font>
+            <Font name="Segoe UI Black" size="24.0" />
+         </font>
+      </Label>
+      <Label layoutX="775.0" layoutY="83.0" style="-fx-font-size: 20;" text="Memory Usage" textFill="#9e9e9e">
+         <font>
+            <Font name="Segoe UI" size="12.0" />
+         </font></Label>
+      <Rectangle fx:id="roundedRectangle141111" arcHeight="10.0" arcWidth="10.0" fill="#3b3b3b" height="420.0" layoutX="544.0" layoutY="291.0" stroke="#000000" strokeWidth="0.0" width="200.0" />
+      <Label layoutX="561.0" layoutY="307.0" style="-fx-font-size: 20;" text="Disk Size" textFill="#9e9e9e" />
+       <TextField id="filePathField" fx:id="filePathField" alignment="CENTER" layoutX="101.0" layoutY="70.0" prefHeight="200.0" prefWidth="420.0" style="; -fx-background-radius:10;" text="Drag and drop folder here">
+           <font>
+               <Font name="Segoe UI Light" size="31.0" />
+           </font>
+
+       </TextField>
+      <Label fx:id="cpuUsageLabel" alignment="CENTER" layoutX="544.0" layoutY="151.0" prefHeight="39.0" prefWidth="200.0" text="? %" textFill="WHITE">
+         <font>
+            <Font name="Segoe UI Black" size="32.0" />
+         </font>
+      </Label>
+      <Label fx:id="memoryPercentage" alignment="CENTER" layoutX="762.0" layoutY="151.0" prefHeight="39.0" prefWidth="200.0" text="? %" textFill="WHITE">
+         <font>
+            <Font name="Segoe UI Black" size="32.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" layoutX="980.0" layoutY="151.0" prefHeight="39.0" prefWidth="200.0" text="??? Folder" textFill="WHITE">
+         <font>
+            <Font name="Segoe UI Black" size="32.0" />
+         </font>
+      </Label>
+      <Label layoutX="118.0" layoutY="83.0" style="-fx-font-size: 20;" text="Path Label">
+         <font>
+            <Font name="Segoe UI Light" size="12.0" />
+         </font>
+      </Label>
 
   </children>
 

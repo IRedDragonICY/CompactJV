@@ -2,29 +2,42 @@ package com.example.compactjv;
 
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.stage.StageStyle;
 
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.concurrent.*;
+
 
 public class Controller {
     @FXML
-    private Button closeButton, minimizeButton, compressButton, decompressButton, settingsButton;
+    private Button closeButton, minimizeButton, compressButton, decompressButton, informationButton;
     @FXML
     private TextField filePathField;
     @FXML
-    private Label currentSizeLabel, sizeOnDiskLabel, compressionAlgorithmLabel, percentageLabel;
+    private Label currentSizeLabel, sizeOnDiskLabel, compressionAlgorithmLabel, percentageLabel, cpuUsageLabel;
     @FXML
     private ChoiceBox<String> compressionAlgorithmChoiceBox;
     @FXML
@@ -37,8 +50,10 @@ public class Controller {
         setupButtons();
         setupFilePathField();
         setupCompressionAlgorithmChoiceBox();
+        setupCPUUsageLabel();
         compact = new File();
         executorServiceManager = new ExecutorServiceManager();
+
     }
 
     private void setupButtons() {
@@ -46,42 +61,131 @@ public class Controller {
         setButtonProperties(minimizeButton, event -> ((Stage) ((Node) event.getSource()).getScene().getWindow()).setIconified(true));
         setupCompressionButton();
         setupDecompressionButton();
-        setLabelAndChoiceBoxVisibility(false);
+        compressionAlgorithmChoiceBox.setDisable(true);
+        setupInformationButton();
+
+        percentageLabel.setText("");
+        progressBar.setVisible(false);
     }
 
+    private void setupCPUUsageLabel() {
+        Runnable task = () -> {
+            while (true) {
+                String cpuUsage = compact.getCPUUsage();
+                Platform.runLater(() -> cpuUsageLabel.setText(cpuUsage + "%"));
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        new Thread(task).start();
+    }
     private void setupCompressionButton() {
         compressButton.setOnAction(event -> handleCompressionOrDecompression(true));
-        compressButton.setVisible(false);
+        compressButton.setDisable(true);
     }
 
     private void setupDecompressionButton() {
         decompressButton.setOnAction(event -> handleCompressionOrDecompression(false));
-        decompressButton.setVisible(false);
+        decompressButton.setDisable(true);
     }
+
+
+    private void setupInformationButton() {
+        informationButton.setOnAction(event -> {
+            Stage primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            primaryStage.getScene().getRoot().setEffect(null);
+            primaryStage.getScene().getRoot().setDisable(true);
+            primaryStage.getScene().getRoot().setOnMousePressed(null);
+
+            Stage dialog = new Stage();
+            dialog.initModality(Modality.WINDOW_MODAL);
+            dialog.initOwner(primaryStage);
+            dialog.initStyle(StageStyle.TRANSPARENT);
+            dialog.setWidth(400);
+            dialog.setHeight(350);
+
+            VBox content = new VBox();
+            content.setSpacing(10);
+            content.setPadding(new Insets(20));
+            content.setStyle("-fx-background-color: #121212FF; -fx-background-radius: 10;");
+
+            Text header = new Text("CompactJV - Compression Tool");
+            header.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+            header.setFill(Color.WHITE);
+
+            Text version = new Text("Version 1.0");
+            version.setFill(Color.WHITE);
+
+            Text description = new Text(
+                    "CompactJV is a compression tool using Compact.exe from Windows SDK for compressing files, "
+                            + "such as games or applications. This tool is developed in Java and intended for use on Windows OS."
+            );
+            description.setWrappingWidth(350);
+            description.setFill(Color.WHITE);
+
+            Text developers = new Text(
+                    "Developed by:\n"
+                            + "1. Muhammad Farid Hendianto (Ndik)   {2200018401}\n"
+                            + "2. Reyhanssan Islamey (Justin) {2200018411}\n"
+                            + "3. Rendie Abdi Saputra (Ryu)    {2200018094}"
+            );
+            developers.setFill(Color.WHITE);
+
+            HBox buttonBox = new HBox();
+            buttonBox.setAlignment(Pos.BOTTOM_RIGHT);
+
+            Button okButton = new Button("OK");
+            okButton.setOnAction(e -> {
+                dialog.close();
+                primaryStage.getScene().getRoot().setEffect(null);
+                primaryStage.getScene().getRoot().setDisable(false);
+            });
+
+            Button githubButton = new Button("GitHub");
+            githubButton.setOnAction(e -> {
+                // Open GitHub page in a web browser
+                String url = "https://github.com/IRedDragonICY/CompactJV";  // Replace with your GitHub repository URL
+                try {
+                    java.awt.Desktop.getDesktop().browse(new URI(url));
+                } catch (IOException | URISyntaxException ex) {
+                    ex.printStackTrace();
+                }
+            });
+
+            buttonBox.getChildren().addAll(okButton, githubButton);
+
+            content.getChildren().addAll(header, version, description, developers, buttonBox);
+
+            Scene scene = new Scene(content);
+            scene.setFill(Color.TRANSPARENT);
+
+            dialog.setScene(scene);
+            dialog.showAndWait();
+        });
+    }
+
+
+
+
 
 
     private void setButtonProperties(Button button, EventHandler<ActionEvent> eventHandler) {
         button.setOnAction(eventHandler);
     }
 
-    private void setLabelAndChoiceBoxVisibility(boolean visibility) {
-        compressionAlgorithmLabel.setVisible(visibility);
-        compressionAlgorithmChoiceBox.setVisible(visibility);
-    }
 
     private void setupFilePathField() {
-        filePathField.setEditable(false);
+        filePathField.textProperty().addListener(this::FieldTextHasChanged);
         filePathField.setOnMouseClicked(this::handleMouseClickedOnField);
         filePathField.setOnDragOver(this::handleDragOverField);
         filePathField.setOnDragDropped(this::handleDragDroppedOnField);
-        filePathField.textProperty().addListener(this::FieldTextHasChanged);
     }
 
     private void setupCompressionAlgorithmChoiceBox() {
-        compressionAlgorithmChoiceBox.setItems(FXCollections.observableArrayList("XPRESS4K", "XPRESS8K", "XPRESS16K", "LZX"));
-        compressionAlgorithmChoiceBox.setValue("XPRESS4K");
         addToolTipsToChoiceBoxItems();
-
     }
     private void addToolTipsToChoiceBoxItems() {
         Tooltip tooltipXPRESS4K = new Tooltip("Fastest, but weakest");
@@ -151,6 +255,7 @@ public class Controller {
 
     private Runnable createCompressionOrDecompressionTask(boolean isCompression, String filePath) {
         return () -> {
+            progressBar.setVisible(true);
             if (isCompression) {
                 String algorithm = compressionAlgorithmChoiceBox.getValue();
                 compact.compress(filePath, algorithm);
@@ -165,6 +270,7 @@ public class Controller {
         Platform.runLater(() -> {
             updateButtonsAndLabels();
             enableButtons();
+            progressBar.setVisible(false);
         });
     }
 
@@ -230,7 +336,6 @@ public class Controller {
         disableButtons();
         currentSizeLabel.setText("Loading...");
         sizeOnDiskLabel.setText("Loading...");
-        setLabelAndChoiceBoxVisibility(false);
         if (compact.isValidDirectory(filePath)) {
             prepareFolder(filePath);
         }
@@ -250,15 +355,14 @@ public class Controller {
             updateButtonVisibilityAndText(isCompressed);
             currentSizeLabel.setText(size.getSizeFormatted());
             sizeOnDiskLabel.setText(isCompressed ? size.getSizeOnDiskFormatted() : "??");
-            setLabelAndChoiceBoxVisibility(true);
+            compressionAlgorithmChoiceBox.setDisable(false);
         });
     }
 
     private void updateButtonVisibilityAndText(boolean isCompressed) {
+        compressButton.setDisable(true);
+        decompressButton.setDisable(!isCompressed);
         compressButton.setDisable(false);
-        decompressButton.setDisable(false);
-        decompressButton.setVisible(isCompressed);
-        compressButton.setVisible(true);
         compressButton.setText(isCompressed ? "Compress Again" : "Compress");
     }
 }
