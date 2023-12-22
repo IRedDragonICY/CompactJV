@@ -2,31 +2,22 @@ package com.example.compactjv;
 
 import com.example.compactjv.UI.ButtonUI;
 import com.example.compactjv.UI.NavbarUI;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import com.example.compactjv.UI.WindowControlsUI;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
-import javafx.util.Duration;
-
-
 import java.util.concurrent.*;
 
 
 public class Controller {
     @FXML
-    private javafx.scene.control.Button closeButton, minimizeButton, compressButton, decompressButton, informationButton;
+    private Button closeButton, minimizeButton, compressButton, decompressButton, informationButton;
     @FXML
     private TextField filePathField;
     @FXML
@@ -55,16 +46,15 @@ public class Controller {
         compact = new File();
         executorServiceManager = new ExecutorServiceManager();
         new NavbarUI(infoText, homeText, navbar, hamburgerButton);
+        new WindowControlsUI(minimizeButton, closeButton);
+        new ButtonUI(compressButton, decompressButton, informationButton);
     }
 
     private void setupButtons() {
-        setButtonProperties(closeButton, event -> Platform.exit());
-        setButtonProperties(minimizeButton, event -> ((Stage) ((Node) event.getSource()).getScene().getWindow()).setIconified(true));
+
         setupCompressionButton();
         setupDecompressionButton();
         compressionAlgorithmChoiceBox.setDisable(true);
-        ButtonUI button = new ButtonUI(informationButton);
-        button.init();
         percentageLabel.setText("");
         progressBar.setVisible(false);
     }
@@ -93,9 +83,6 @@ public class Controller {
         decompressButton.setDisable(true);
     }
 
-    private void setButtonProperties(javafx.scene.control.Button button, EventHandler<ActionEvent> eventHandler) {
-        button.setOnAction(eventHandler);
-    }
 
 
     private void setupFilePathField() {
@@ -163,6 +150,10 @@ public class Controller {
 
     private void FieldTextHasChanged(ObservableValue<? extends String> observable, String oldValue, String newValue) {
         updateButtonsAndLabels();
+    }
+    private void updateFilePath(java.io.File file) {
+        compact.setFilePath(file.getAbsolutePath());
+        filePathField.setText(file.getName());
     }
 
     private void handleCompressionOrDecompression(boolean isCompression) {
@@ -247,10 +238,6 @@ public class Controller {
         decompressButton.setDisable(false);
     }
 
-    private void updateFilePath(java.io.File file) {
-        compact.setFilePath(file.getAbsolutePath());
-        filePathField.setText(file.getName());
-    }
 
     private void updateButtonsAndLabels() {
         String filePath = compact.getFilePath();

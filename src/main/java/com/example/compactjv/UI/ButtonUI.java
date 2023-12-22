@@ -1,4 +1,5 @@
 package com.example.compactjv.UI;
+
 import javafx.scene.paint.Color;
 import javafx.stage.*;
 import javafx.scene.*;
@@ -9,13 +10,23 @@ import javafx.geometry.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Objects;
+
 import javafx.scene.control.Button;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter @Setter
 public class ButtonUI {
-    private Button informationButton;
+    private Button compressButton, decompressButton, informationButton;
 
-    public ButtonUI(javafx.scene.control.Button informationButton) {
+
+    public ButtonUI(Button compressButton, Button decompressButton, Button informationButton) {
+
+        this.compressButton = compressButton;
+        this.decompressButton = decompressButton;
         this.informationButton = informationButton;
+        init();
     }
 
     private void setupInformationButton() {
@@ -43,7 +54,7 @@ public class ButtonUI {
             Text version = new Text("Version 1.0");
             version.setFill(Color.WHITE);
 
-            javafx.scene.image.Image image = new javafx.scene.image.Image(getClass().getResourceAsStream("/com/example/compactjv/logo-publisher.png"));
+            javafx.scene.image.Image image = new javafx.scene.image.Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/compactjv/logo-publisher.png")));
             ImageView logoImageView = new ImageView(image);
             logoImageView.setPreserveRatio(true);
             logoImageView.setFitWidth(150);
@@ -58,10 +69,11 @@ public class ButtonUI {
             description.setFill(Color.WHITE);
 
             Text developers = new Text(
-                    "Developed by:\n"
-                            + "1. Muhammad Farid Hendianto (Ndik)   {2200018401}\n"
-                            + "2. Reyhanssan Islamey (Justin) {2200018411}\n"
-                            + "3. Rendie Abdi Saputra (Ryu)    {2200018094}"
+                    """
+                            Developed by:
+                            1. Muhammad Farid Hendianto (Ndik)   {2200018401}
+                            2. Reyhanssan Islamey (Justin) {2200018411}
+                            3. Rendie Abdi Saputra (Ryu)    {2200018094}"""
             );
             developers.setFill(Color.WHITE);
 
@@ -110,5 +122,6 @@ public class ButtonUI {
     public void init() {
         setupInformationButton();
     }
+
 }
 
