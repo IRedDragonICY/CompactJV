@@ -42,6 +42,8 @@ dependencies {
   implementation('com.dlsc.formsfx:formsfx-core:11.6.0') {
     exclude(group: 'org.openjfx')
   }
+  compileOnly('org.projectlombok:lombok:1.18.30')
+    annotationProcessor('org.projectlombok:lombok:1.18.30')
   implementation('net.synedra:validatorfx:0.4.0') {
     exclude(group: 'org.openjfx')
   }

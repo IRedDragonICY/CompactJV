@@ -1,39 +1,32 @@
 package com.example.compactjv;
 
+import com.example.compactjv.UI.ButtonUI;
+import com.example.compactjv.UI.NavbarUI;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
-import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.concurrent.*;
 
 
 public class Controller {
     @FXML
-    private Button closeButton, minimizeButton, compressButton, decompressButton, informationButton;
+    private javafx.scene.control.Button closeButton, minimizeButton, compressButton, decompressButton, informationButton;
     @FXML
     private TextField filePathField;
     @FXML
@@ -45,6 +38,14 @@ public class Controller {
     private File compact;
     private ExecutorServiceManager executorServiceManager;
 
+    @FXML
+    private Label infoText;
+    @FXML
+    private Label homeText;
+    @FXML
+    private AnchorPane navbar;
+    @FXML
+    private Button hamburgerButton;
 
     public void initialize() {
         setupButtons();
@@ -53,7 +54,7 @@ public class Controller {
         setupCPUUsageLabel();
         compact = new File();
         executorServiceManager = new ExecutorServiceManager();
-
+        new NavbarUI(infoText, homeText, navbar, hamburgerButton);
     }
 
     private void setupButtons() {
@@ -62,8 +63,8 @@ public class Controller {
         setupCompressionButton();
         setupDecompressionButton();
         compressionAlgorithmChoiceBox.setDisable(true);
-        setupInformationButton();
-
+        ButtonUI button = new ButtonUI(informationButton);
+        button.init();
         percentageLabel.setText("");
         progressBar.setVisible(false);
     }
@@ -92,87 +93,7 @@ public class Controller {
         decompressButton.setDisable(true);
     }
 
-
-    private void setupInformationButton() {
-        informationButton.setOnAction(event -> {
-            Stage primaryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            primaryStage.getScene().getRoot().setEffect(null);
-            primaryStage.getScene().getRoot().setDisable(true);
-            primaryStage.getScene().getRoot().setOnMousePressed(null);
-
-            Stage dialog = new Stage();
-            dialog.initModality(Modality.WINDOW_MODAL);
-            dialog.initOwner(primaryStage);
-            dialog.initStyle(StageStyle.TRANSPARENT);
-            dialog.setWidth(400);
-            dialog.setHeight(350);
-
-            VBox content = new VBox();
-            content.setSpacing(10);
-            content.setPadding(new Insets(20));
-            content.setStyle("-fx-background-color: #121212FF; -fx-background-radius: 10;");
-
-            Text header = new Text("CompactJV - Compression Tool");
-            header.setFont(Font.font("Arial", FontWeight.BOLD, 16));
-            header.setFill(Color.WHITE);
-
-            Text version = new Text("Version 1.0");
-            version.setFill(Color.WHITE);
-
-            Text description = new Text(
-                    "CompactJV is a compression tool using Compact.exe from Windows SDK for compressing files, "
-                            + "such as games or applications. This tool is developed in Java and intended for use on Windows OS."
-            );
-            description.setWrappingWidth(350);
-            description.setFill(Color.WHITE);
-
-            Text developers = new Text(
-                    "Developed by:\n"
-                            + "1. Muhammad Farid Hendianto (Ndik)   {2200018401}\n"
-                            + "2. Reyhanssan Islamey (Justin) {2200018411}\n"
-                            + "3. Rendie Abdi Saputra (Ryu)    {2200018094}"
-            );
-            developers.setFill(Color.WHITE);
-
-            HBox buttonBox = new HBox();
-            buttonBox.setAlignment(Pos.BOTTOM_RIGHT);
-
-            Button okButton = new Button("OK");
-            okButton.setOnAction(e -> {
-                dialog.close();
-                primaryStage.getScene().getRoot().setEffect(null);
-                primaryStage.getScene().getRoot().setDisable(false);
-            });
-
-            Button githubButton = new Button("GitHub");
-            githubButton.setOnAction(e -> {
-                // Open GitHub page in a web browser
-                String url = "https://github.com/IRedDragonICY/CompactJV";  // Replace with your GitHub repository URL
-                try {
-                    java.awt.Desktop.getDesktop().browse(new URI(url));
-                } catch (IOException | URISyntaxException ex) {
-                    ex.printStackTrace();
-                }
-            });
-
-            buttonBox.getChildren().addAll(okButton, githubButton);
-
-            content.getChildren().addAll(header, version, description, developers, buttonBox);
-
-            Scene scene = new Scene(content);
-            scene.setFill(Color.TRANSPARENT);
-
-            dialog.setScene(scene);
-            dialog.showAndWait();
-        });
-    }
-
-
-
-
-
-
-    private void setButtonProperties(Button button, EventHandler<ActionEvent> eventHandler) {
+    private void setButtonProperties(javafx.scene.control.Button button, EventHandler<ActionEvent> eventHandler) {
         button.setOnAction(eventHandler);
     }
 

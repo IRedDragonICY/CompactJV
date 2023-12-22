@@ -1,25 +1,18 @@
 package com.example.compactjv;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public class Size {
     private static final int SIZE_KB = 1024;
     private static final int SIZE_MB = SIZE_KB * 1024;
     private static final int SIZE_GB = SIZE_MB * 1024;
 
-    private long size;
-    private long sizeOnDisk;
-
-    public Size(long size, long sizeOnDisk) {
-        this.size = size;
-        this.sizeOnDisk = sizeOnDisk;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-    public long getSizeOnDisk() {
-        return sizeOnDisk;
-    }
+    @Getter
+    private final long size;
+    @Getter
+    private final long sizeOnDisk;
 
     public String getSizeFormatted() {
         return formatSize(size);

@@ -1,36 +1,20 @@
 package com.example.compactjv;
 
+import lombok.Getter;
+import lombok.Setter;
 import java.io.*;
 
-
+@Getter
+@Setter
 public class File {
     private static final String CMD = "cmd.exe";
     private static final String QUERY_COMMAND = "compact /Q /A /I /S:";
     private String filePath;
     private Long totalCompressed;
     private Long totalDecompressed;
-    private Compressor compressor = new Compressor();
-    private int indexOfCompressed = 0;
-    private int indexOfDecompressed = 4;
-
-    public String getFilePath() {
-        return filePath;
-    }
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-    public Long getTotalCompressed() {
-        return totalCompressed;
-    }
-    public void setTotalCompressed(Long totalCompressed) {
-        this.totalCompressed = totalCompressed;
-    }
-    public Long getTotalDecompressed() {
-        return totalDecompressed;
-    }
-    public void setTotalDecompressed(Long totalDecompressed) {
-        this.totalDecompressed = totalDecompressed;
-    }
+    private final Compressor compressor = new Compressor();
+    private final int indexOfCompressed = 0;
+    private final int indexOfDecompressed = 4;
 
     public void compress(String filePath, String algorithm) {
         compressor.compress(filePath, algorithm);
@@ -52,6 +36,7 @@ public class File {
         }
         return parts[0];
     }
+
     public boolean isCompressed(String filePath) {
         String output = CommandRunner.runCommand(QUERY_COMMAND + "\"" + filePath + "\"", true);
         String Lines[] = output.split("\\n");
@@ -84,6 +69,7 @@ public class File {
         }
         return new Size(size, sizeOnDisk);
     }
+
     public void getTotalFolderCompressed(String filePath) {
         String output = CommandRunner.runCommand("compact /Q /A /I /S:\"" + filePath + "\"", true);
         String Lines[] = output.split("\\n");
