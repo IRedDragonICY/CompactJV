@@ -21,7 +21,7 @@ public class Controller {
     @FXML
     private TextField filePathField;
     @FXML
-    private Label currentSizeLabel, sizeOnDiskLabel, compressionAlgorithmLabel, percentageLabel, cpuUsageLabel;
+    private Label currentSizeLabel, sizeOnDiskLabel, percentageLabel, cpuUsageLabel;
     @FXML
     private ChoiceBox<String> compressionAlgorithmChoiceBox;
     @FXML
@@ -51,7 +51,6 @@ public class Controller {
     }
 
     private void setupButtons() {
-
         setupCompressionButton();
         setupDecompressionButton();
         compressionAlgorithmChoiceBox.setDisable(true);
@@ -237,7 +236,6 @@ public class Controller {
         compressButton.setDisable(false);
         decompressButton.setDisable(false);
     }
-
 
     private void updateButtonsAndLabels() {
         String filePath = compact.getFilePath();
