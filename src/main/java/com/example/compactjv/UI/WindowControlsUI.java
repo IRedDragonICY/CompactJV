@@ -11,7 +11,7 @@ public class WindowControlsUI {
 
     public WindowControlsUI(Button minimizeButton, Button closeButton) {
 
-        setButtonProperties(closeButton, event -> Platform.exit());
+        setButtonProperties(closeButton, event -> System.exit(0));
         setButtonProperties(minimizeButton, event -> ((Stage) ((Node) event.getSource()).getScene().getWindow()).setIconified(true));
     }
     private void setButtonProperties(javafx.scene.control.Button button, EventHandler<ActionEvent> eventHandler) {

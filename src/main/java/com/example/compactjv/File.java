@@ -2,7 +2,11 @@ package com.example.compactjv;
 
 import lombok.Getter;
 import lombok.Setter;
-import java.io.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 @Getter
 @Setter
@@ -36,19 +40,51 @@ public class File {
         }
         return parts[0];
     }
+    public static String getMemoryUsage() {
+        String output = CommandRunner.runCommand("wmic OS get FreePhysicalMemory,TotalVisibleMemorySize /Value", true);
+        String[] lines = output.split("\n");
+        long[] memory = new long[2];
+        for (String line : lines) {
+            if (line.startsWith("FreePhysicalMemory")) {
+                String value = line.split("=")[1];
+                memory[0] = Long.parseLong(value);
+            } else if (line.startsWith("TotalVisibleMemorySize")) {
+                String value = line.split("=")[1];
+                memory[1] = Long.parseLong(value);
+            }
+        }
+        double percentage = 100 * (1 - (double)memory[0] / (double)memory[1]);
+        return String.format("%.2f", percentage);
+    }
+
+
+    public long getTotalFilesInFolder() {
+        String filePath = getFilePath();
+        Path path = Paths.get(filePath);
+        long totalFiles = 0;
+
+        try {
+            totalFiles = Files.walk(path)
+                    .parallel()
+                    .filter(p -> p.toFile().isFile())
+                    .count();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return totalFiles;
+    }
+
+
+
 
     public boolean isCompressed(String filePath) {
         String output = CommandRunner.runCommand(QUERY_COMMAND + "\"" + filePath + "\"", true);
-        String Lines[] = output.split("\\n");
-        for (String line : Lines) {
-            if (line.contains(" are compressed")) {
-                String[] parts = line.split(" ");
-                Long total = Long.parseLong(parts[0].replace(".", ""));
-                return total != 0;
-            }
-        }
-        return false;
+        return Arrays.stream(output.split("\\n"))
+                .filter(line -> line.contains(" are compressed"))
+                .map(line -> Long.parseLong(line.split(" ")[0].replace(".", "")))
+                .anyMatch(total -> total != 0);
     }
+
 
     public Size calculateFolderSize(String filePath) {
         String output = CommandRunner.runCommand(QUERY_COMMAND + "\"" + filePath + "\"", true);
@@ -72,24 +108,19 @@ public class File {
 
     public void getTotalFolderCompressed(String filePath) {
         String output = CommandRunner.runCommand("compact /Q /A /I /S:\"" + filePath + "\"", true);
-        String Lines[] = output.split("\\n");
-        for (String line : Lines) {
-            if (line.contains(" are compressed")) {
-                String[] parts = line.split(" ");
-                Long totalCompressed = Long.parseLong(parts[indexOfCompressed].replace(".", ""));
-                Long totalDecompressed = Long.parseLong(parts[indexOfDecompressed].replace(".", ""));
-                setTotalCompressed(totalCompressed);
-                setTotalDecompressed(totalDecompressed);
-                break;
-            }
-        }
+        Arrays.stream(output.split("\\n"))
+                .filter(line -> line.contains(" are compressed"))
+                .findFirst()
+                .ifPresent(line -> {
+                    String[] parts = line.split(" ");
+                    setTotalCompressed(Long.parseLong(parts[indexOfCompressed].replace(".", "")));
+                    setTotalDecompressed(Long.parseLong(parts[indexOfDecompressed].replace(".", "")));
+                });
     }
 
+
     public boolean isValidDirectory(String path) {
-        if (path != null && !path.isEmpty()) {
-            java.io.File file = new java.io.File(path);
-            return file.exists() && file.isDirectory();
-        }
-        return false;
+        return path != null && !path.isEmpty() && new java.io.File(path).isDirectory();
     }
+
 }

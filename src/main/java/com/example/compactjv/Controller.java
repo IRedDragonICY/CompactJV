@@ -19,13 +19,14 @@ public class Controller {
     @FXML
     private TextField filePathField;
     @FXML
-    private Label currentSizeLabel, sizeOnDiskLabel, percentageLabel, cpuUsageLabel;
+    private Label currentSizeLabel, sizeOnDiskLabel, percentageLabel, cpuUsageLabel, memoryUsageLabel, totalFolderOnFile;
     @FXML
     private ChoiceBox<String> compressionAlgorithmChoiceBox;
     @FXML
     private ProgressBar progressBar;
     private File compact;
     private ExecutorServiceManager executorServiceManager;
+
 
     @FXML
     private Label infoText;
@@ -40,12 +41,13 @@ public class Controller {
         setupButtons();
         setupCompressionAlgorithmChoiceBox();
         setupCPUUsageLabel();
+        setupMemoryUsageLabel();
         compact = new File();
         executorServiceManager = new ExecutorServiceManager();
         new NavbarUI(infoText, homeText, navbar, hamburgerButton);
         new WindowControlsUI(minimizeButton, closeButton);
         new ButtonUI(compressButton, decompressButton, informationButton);
-        new FilePathUI(compact, filePathField, currentSizeLabel, sizeOnDiskLabel, compressButton, decompressButton, compressionAlgorithmChoiceBox);
+        new FilePathUI(compact, filePathField, currentSizeLabel, sizeOnDiskLabel, totalFolderOnFile, compressButton, decompressButton, compressionAlgorithmChoiceBox, executorServiceManager);
     }
 
     private void setupButtons() {
@@ -59,8 +61,23 @@ public class Controller {
     private void setupCPUUsageLabel() {
         Runnable task = () -> {
             while (true) {
-                String cpuUsage = compact.getCPUUsage();
+                String cpuUsage = File.getCPUUsage();
                 Platform.runLater(() -> cpuUsageLabel.setText(cpuUsage + "%"));
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        new Thread(task).start();
+    }
+
+    private void setupMemoryUsageLabel() {
+        Runnable task = () -> {
+            while (true) {
+                String memoryUsage = File.getMemoryUsage();
+                Platform.runLater(() -> memoryUsageLabel.setText(memoryUsage + "%"));
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -145,24 +162,35 @@ public class Controller {
         decompressButton.setDisable(true);
     }
 
-    private void monitorTaskUntilCompletion(Future<?> future, String filePath, boolean isCompression) {
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        try {
-            executorService.submit(() -> {
-                while (!future.isDone()) {
-                    compact.getTotalFolderCompressed(filePath);
-                    updatePercentageLabel(isCompression);
-                }
 
-                Platform.runLater(() -> {
-                    percentageLabel.setText("100%");
-                    progressBar.setProgress(1);
-                });
+    private void monitorTaskUntilCompletion(Future<?> future, String filePath, boolean isCompression) {
+        ExecutorServiceManager executorManager = new ExecutorServiceManager();
+
+        executorManager.submitTask(() -> {
+            while (!future.isDone()) {
+                compact.getTotalFolderCompressed(filePath);
+                updatePercentageLabel(isCompression);
+            }
+
+            Platform.runLater(() -> {
+                percentageLabel.setText("Finished!");
+
+                ScheduledExecutorService scheduler = executorManager.getScheduledExecutor();
+                scheduler.schedule(() -> {
+                    Platform.runLater(() -> {
+                        percentageLabel.setText("");
+                        // Jangan lupa untuk shutdown scheduler setelah selesai
+                        executorManager.shutdownScheduler();
+                    });
+                }, 5, TimeUnit.SECONDS);
             });
-        } finally {
-            executorService.shutdown();
-        }
+        });
     }
+
+
+
+
+
 
     private void updatePercentageLabel(boolean isCompression){
         long totalCompressed = compact.getTotalCompressed();
@@ -176,12 +204,9 @@ public class Controller {
     }
 
     private double calculatePercentage(long totalCompressed, long totalDecompressed, long total, boolean isCompression) {
-        if (isCompression) {
-            return (double) totalCompressed / total * 100;
-        } else {
-            return (double) totalDecompressed / total * 100;
-        }
+        return (double) (isCompression ? totalCompressed : totalDecompressed) / total * 100;
     }
+
 
     private void enableButtons() {
         compressButton.setDisable(false);
@@ -203,6 +228,7 @@ public class Controller {
         compressButton.setDisable(true);
         decompressButton.setDisable(!isCompressed);
         compressButton.setDisable(false);
+        progressBar.setVisible(false);
         compressButton.setText(isCompressed ? "Compress Again" : "Compress");
     }
 }

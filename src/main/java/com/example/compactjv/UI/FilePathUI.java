@@ -1,5 +1,6 @@
 package com.example.compactjv.UI;
 
+import com.example.compactjv.ExecutorServiceManager;
 import com.example.compactjv.File;
 import com.example.compactjv.Size;
 import javafx.application.Platform;
@@ -14,8 +15,7 @@ import javafx.scene.input.TransferMode;
 import javafx.stage.DirectoryChooser;
 import javafx.scene.control.Button;
 
-
-
+import java.io.IOException;
 
 public class FilePathUI {
 
@@ -25,20 +25,27 @@ public class FilePathUI {
     private final Label sizeOnDiskLabel;
     private final Button compressButton;
     private final Button decompressButton;
+    private final Label totalFolderOnFileLabel;
     private final ChoiceBox compressionAlgorithmChoiceBox;
-    public FilePathUI(File compact, TextField filePathField , Label currentSizeLabel, Label sizeOnDiskLabel, Button compressButton, Button decompressButton, ChoiceBox compressionAlgorithmChoiceBox) {
+    private final ExecutorServiceManager executorServiceManager;
+
+    public FilePathUI(File compact, TextField filePathField, Label currentSizeLabel, Label sizeOnDiskLabel,Label totalFolderOnFileLabel,
+                      Button compressButton, Button decompressButton, ChoiceBox compressionAlgorithmChoiceBox,
+                      ExecutorServiceManager executorServiceManager) {
         this.filePathField = filePathField;
         this.compact = compact;
         this.currentSizeLabel = currentSizeLabel;
         this.sizeOnDiskLabel = sizeOnDiskLabel;
+        this.totalFolderOnFileLabel = totalFolderOnFileLabel;
         this.compressButton = compressButton;
         this.decompressButton = decompressButton;
         this.compressionAlgorithmChoiceBox = compressionAlgorithmChoiceBox;
+        this.executorServiceManager = executorServiceManager;
         setupFilePathField();
     }
 
     private void setupFilePathField() {
-        filePathField.textProperty().addListener(this::FieldTextHasChanged);
+        filePathField.textProperty().addListener(this::fieldTextHasChanged);
         filePathField.setOnMouseClicked(this::handleMouseClickedOnField);
         filePathField.setOnDragOver(this::handleDragOverField);
         filePathField.setOnDragDropped(this::handleDragDroppedOnField);
@@ -73,7 +80,7 @@ public class FilePathUI {
         event.consume();
     }
 
-    private void FieldTextHasChanged(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+    private void fieldTextHasChanged(ObservableValue<? extends String> observable, String oldValue, String newValue) {
         String filePath = compact.getFilePath();
         compressButton.setDisable(true);
         decompressButton.setDisable(true);
@@ -81,27 +88,32 @@ public class FilePathUI {
         sizeOnDiskLabel.setText("Loading...");
         if (compact.isValidDirectory(filePath)) {
             prepareFolder(filePath);
+            compressionAlgorithmChoiceBox.setDisable(false);
         }
     }
+
     private void updateFilePath(java.io.File file) {
         compact.setFilePath(file.getAbsolutePath());
         filePathField.setText(file.getName());
     }
 
     private void prepareFolder(String filePath) {
-        Runnable task = () -> {
+        executorServiceManager.executeTask(() -> {
             boolean isCompressed = compact.isCompressed(filePath);
             Size size = compact.calculateFolderSize(filePath);
             Platform.runLater(() -> {
-                compressButton.setDisable(isCompressed);
-                decompressButton.setDisable(!isCompressed);
-                compressButton.setText(isCompressed ? "Compress Again" : "Compress");
-                currentSizeLabel.setText(size.getSizeFormatted());
-                sizeOnDiskLabel.setText(isCompressed ? size.getSizeOnDiskFormatted() : "??");
-                compressionAlgorithmChoiceBox.setDisable(false);
+                updateUI(isCompressed, size);
             });
-        };
-        new Thread(task).start();
+        });
     }
 
+    private void updateUI(boolean isCompressed, Size size) {
+        compressButton.setDisable(isCompressed);
+        decompressButton.setDisable(!isCompressed);
+        compressButton.setText(isCompressed ? "Compress Again" : "Compress");
+        currentSizeLabel.setText(size.getSizeFormatted());
+        sizeOnDiskLabel.setText(isCompressed ? size.getSizeOnDiskFormatted() : "??");
+        totalFolderOnFileLabel.setText(Long.toString(compact.getTotalFilesInFolder()));
+
+    }
 }
