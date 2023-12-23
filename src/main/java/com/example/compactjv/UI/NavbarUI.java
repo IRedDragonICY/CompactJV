@@ -1,6 +1,5 @@
 package com.example.compactjv.UI;
 
-import com.example.compactjv.Controller;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -12,7 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class NavbarUI extends Controller {
+public class NavbarUI  {
 
     private Label infoText;
     private Label homeText;

@@ -2,14 +2,12 @@ package com.example.compactjv;
 
 import com.example.compactjv.UI.ButtonUI;
 import com.example.compactjv.UI.NavbarUI;
+import com.example.compactjv.UI.FilePathUI;
 import com.example.compactjv.UI.WindowControlsUI;
 import javafx.application.Platform;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.DirectoryChooser;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
 import java.util.concurrent.*;
@@ -40,7 +38,6 @@ public class Controller {
 
     public void initialize() {
         setupButtons();
-        setupFilePathField();
         setupCompressionAlgorithmChoiceBox();
         setupCPUUsageLabel();
         compact = new File();
@@ -48,6 +45,7 @@ public class Controller {
         new NavbarUI(infoText, homeText, navbar, hamburgerButton);
         new WindowControlsUI(minimizeButton, closeButton);
         new ButtonUI(compressButton, decompressButton, informationButton);
+        new FilePathUI(compact, filePathField, currentSizeLabel, sizeOnDiskLabel, compressButton, decompressButton, compressionAlgorithmChoiceBox);
     }
 
     private void setupButtons() {
@@ -82,15 +80,6 @@ public class Controller {
         decompressButton.setDisable(true);
     }
 
-
-
-    private void setupFilePathField() {
-        filePathField.textProperty().addListener(this::FieldTextHasChanged);
-        filePathField.setOnMouseClicked(this::handleMouseClickedOnField);
-        filePathField.setOnDragOver(this::handleDragOverField);
-        filePathField.setOnDragDropped(this::handleDragDroppedOnField);
-    }
-
     private void setupCompressionAlgorithmChoiceBox() {
         addToolTipsToChoiceBoxItems();
     }
@@ -118,43 +107,6 @@ public class Controller {
             }
         });
     }
-    private void handleMouseClickedOnField(MouseEvent event) {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        java.io.File selectedDirectory = directoryChooser.showDialog(null);
-        if (selectedDirectory != null) {
-            updateFilePath(selectedDirectory);
-        }
-    }
-
-    private void handleDragOverField(DragEvent event) {
-        if (event.getGestureSource() != filePathField && event.getDragboard().hasFiles()) {
-            event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-        }
-        event.consume();
-    }
-
-    private void handleDragDroppedOnField(DragEvent event) {
-        Dragboard db = event.getDragboard();
-        boolean success = false;
-        if (db.hasFiles()) {
-            java.io.File file = db.getFiles().get(0);
-            if(file.isDirectory()){
-                updateFilePath(file);
-                success = true;
-            }
-        }
-        event.setDropCompleted(success);
-        event.consume();
-    }
-
-    private void FieldTextHasChanged(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        updateButtonsAndLabels();
-    }
-    private void updateFilePath(java.io.File file) {
-        compact.setFilePath(file.getAbsolutePath());
-        filePathField.setText(file.getName());
-    }
-
     private void handleCompressionOrDecompression(boolean isCompression) {
         String filePath = compact.getFilePath();
         updateSizeOnDiskLabel("Loading...");
@@ -178,11 +130,10 @@ public class Controller {
     }
 
     private void updateAfterTaskCompletion() {
-        Platform.runLater(() -> {
-            updateButtonsAndLabels();
-            enableButtons();
-            progressBar.setVisible(false);
-        });
+        Size size = compact.calculateFolderSize(compact.getFilePath());
+        boolean isCompressed = compact.isCompressed(compact.getFilePath());
+        updateUIAfterFolderPreparation(isCompressed, size);
+        enableButtons();
     }
 
     private void updateSizeOnDiskLabel(String text) {
@@ -237,24 +188,7 @@ public class Controller {
         decompressButton.setDisable(false);
     }
 
-    private void updateButtonsAndLabels() {
-        String filePath = compact.getFilePath();
-        disableButtons();
-        currentSizeLabel.setText("Loading...");
-        sizeOnDiskLabel.setText("Loading...");
-        if (compact.isValidDirectory(filePath)) {
-            prepareFolder(filePath);
-        }
-    }
 
-    private void prepareFolder(String filePath) {
-        Runnable task = () -> {
-            boolean isCompressed = compact.isCompressed(filePath);
-            Size size = compact.calculateFolderSize(filePath);
-            updateUIAfterFolderPreparation(isCompressed, size);
-        };
-        new Thread(task).start();
-    }
 
     private void updateUIAfterFolderPreparation(boolean isCompressed, Size size) {
         Platform.runLater(() -> {
