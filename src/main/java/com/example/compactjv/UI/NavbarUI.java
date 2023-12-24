@@ -12,7 +12,6 @@ import lombok.Setter;
 
 @Getter @Setter
 public class NavbarUI  {
-
     private Label infoText;
     private Label homeText;
     private AnchorPane navbar;

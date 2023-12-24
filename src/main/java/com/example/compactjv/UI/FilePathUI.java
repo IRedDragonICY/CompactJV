@@ -15,7 +15,6 @@ import javafx.scene.input.TransferMode;
 import javafx.stage.DirectoryChooser;
 import javafx.scene.control.Button;
 
-import java.io.IOException;
 
 public class FilePathUI {
 
