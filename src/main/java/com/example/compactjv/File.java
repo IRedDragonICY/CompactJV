@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -30,7 +31,7 @@ public class File {
 
     public static String getCPUUsage() {
         String output = CommandRunner.runCommand("wmic cpu get loadpercentage", true);
-        String[] lines = output.split("\n");
+        String[] lines = Objects.requireNonNull(output).split("\n");
         if(lines.length < 3) {
             return "0";
         }
@@ -42,7 +43,7 @@ public class File {
     }
     public static String getMemoryUsage() {
         String output = CommandRunner.runCommand("wmic OS get FreePhysicalMemory,TotalVisibleMemorySize /Value", true);
-        String[] lines = output.split("\n");
+        String[] lines = Objects.requireNonNull(output).split("\n");
         long[] memory = new long[2];
         for (String line : lines) {
             if (line.startsWith("FreePhysicalMemory")) {
@@ -79,7 +80,7 @@ public class File {
 
     public boolean isCompressed(String filePath) {
         String output = CommandRunner.runCommand(QUERY_COMMAND + "\"" + filePath + "\"", true);
-        return Arrays.stream(output.split("\\n"))
+        return Arrays.stream(Objects.requireNonNull(output).split("\\n"))
                 .filter(line -> line.contains(" are compressed"))
                 .map(line -> Long.parseLong(line.split(" ")[0].replace(".", "")))
                 .anyMatch(total -> total != 0);
@@ -88,7 +89,7 @@ public class File {
 
     public Size calculateFolderSize(String filePath) {
         String output = CommandRunner.runCommand(QUERY_COMMAND + "\"" + filePath + "\"", true);
-        return getSizeFromOutput(output);
+        return getSizeFromOutput(Objects.requireNonNull(output));
     }
 
     private Size getSizeFromOutput(String output) {
@@ -108,7 +109,7 @@ public class File {
 
     public void getTotalFolderCompressed(String filePath) {
         String output = CommandRunner.runCommand("compact /Q /A /I /S:\"" + filePath + "\"", true);
-        Arrays.stream(output.split("\\n"))
+        Arrays.stream(Objects.requireNonNull(output).split("\\n"))
                 .filter(line -> line.contains(" are compressed"))
                 .findFirst()
                 .ifPresent(line -> {

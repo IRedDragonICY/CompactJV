@@ -3,15 +3,14 @@ package com.example.compactjv;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
 public class Size {
     private static final int SIZE_KB = 1024;
     private static final int SIZE_MB = SIZE_KB * 1024;
     private static final int SIZE_GB = SIZE_MB * 1024;
 
-    @Getter
     private final long size;
-    @Getter
     private final long sizeOnDisk;
 
     public String getSizeFormatted() {

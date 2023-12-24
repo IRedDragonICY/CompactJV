@@ -1,6 +1,4 @@
 package com.example.compactjv.UI;
-
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;

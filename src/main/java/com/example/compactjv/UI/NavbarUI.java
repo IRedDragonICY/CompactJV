@@ -11,12 +11,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class NavbarUI  {
-    private Label infoText;
-    private Label homeText;
-    private AnchorPane navbar;
-    private Button hamburgerButton;
-    private boolean isNavbarVisible = false;
+public class NavbarUI {
+    private final Label infoText;
+    private final Label homeText;
+    private final AnchorPane navbar;
+    private final Button hamburgerButton;
+    private boolean isNavbarVisible;
 
     public NavbarUI(Label infoText, Label homeText, AnchorPane navbar, Button hamburgerButton) {
         this.infoText = infoText;
@@ -24,7 +24,10 @@ public class NavbarUI  {
         this.navbar = navbar;
         this.hamburgerButton = hamburgerButton;
 
+        // hide the navbar initially
         hideNavbar();
+
+        // toggle navbar visibility when hamburger button is clicked
         hamburgerButton.setOnMouseClicked(event -> toggleNavbar());
     }
 
@@ -37,7 +40,7 @@ public class NavbarUI  {
     }
 
     private void showNavbar() {
-        Timeline timeline = getTimeline(200);
+        Timeline timeline = createTimeline(200);
         timeline.setOnFinished(e -> navbar.getChildren().addAll(infoText, homeText));
         timeline.play();
         isNavbarVisible = true;
@@ -45,16 +48,23 @@ public class NavbarUI  {
 
     private void hideNavbar() {
         navbar.getChildren().removeAll(infoText, homeText);
-        Timeline timeline = getTimeline(65);
+        Timeline timeline = createTimeline(65);
         timeline.play();
         isNavbarVisible = false;
     }
 
-    private Timeline getTimeline(int width) {
-        Timeline timeline = new Timeline();
+    /**
+     * Create a timeline for animating the navbar
+     * @param width target width
+     * @return timeline object
+     */
+    private Timeline createTimeline(int width) {
         KeyValue kv = new KeyValue(navbar.prefWidthProperty(), width);
         KeyFrame kf = new KeyFrame(Duration.millis(300), kv);
+
+        Timeline timeline = new Timeline();
         timeline.getKeyFrames().add(kf);
+
         return timeline;
     }
 }

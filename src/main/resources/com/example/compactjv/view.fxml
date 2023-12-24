@@ -60,7 +60,7 @@
             <Font name="Segoe UI Black" size="32.0" />
          </font>
       </Label>
-      <ChoiceBox fx:id="compressionAlgorithmChoiceBox" layoutX="105.0" layoutY="521.0" prefHeight="86.0" prefWidth="417.0" style="-fx-background-color: transparent; -fx-text-fill: white;">
+      <ChoiceBox fx:id="compressionAlgorithmChoiceBox" layoutX="105.0" layoutY="521.0" prefHeight="86.0" prefWidth="417.0" style="-fx-background-color: #3b3b3b; -fx-text-fill: white;">
           <items>
               <FXCollections fx:factory="observableArrayList">
                   <String fx:value="XPRESS4K" />
@@ -161,7 +161,7 @@
               </Button>
           </children>
       </AnchorPane>
-      <Label layoutX="774.0" layoutY="307.0" prefHeight="30.0" prefWidth="177.0" style="-fx-font-size: 20;" text="CompactAI" textFill="#9e9e9e" />
+      <Label layoutX="774.0" layoutY="306.0" prefHeight="30.0" prefWidth="107.0" style="-fx-font-size: 20;" text="Debugging" textFill="#9e9e9e" />
         <Label layoutX="565.0" layoutY="306.0" style="-fx-font-size: 20;" text="Disk Size" textFill="#9e9e9e" />
 
 

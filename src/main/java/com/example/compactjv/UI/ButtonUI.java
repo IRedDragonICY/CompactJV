@@ -120,6 +120,7 @@ public class ButtonUI {
     }
 
     public void init() {
+
         setupInformationButton();
     }
 

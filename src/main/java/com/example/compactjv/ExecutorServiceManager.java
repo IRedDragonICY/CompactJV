@@ -1,14 +1,17 @@
 package com.example.compactjv;
 
-import java.util.concurrent.*;
+import lombok.Getter;
 
+import java.util.concurrent.*;
+@Getter
 public class ExecutorServiceManager {
 
     private final ExecutorService executorService;
-    private ScheduledExecutorService scheduler;
+    private final ScheduledExecutorService scheduler;
 
     public ExecutorServiceManager() {
-        this.executorService = Executors.newFixedThreadPool(4); // Sesuaikan jumlah thread sesuai dengan kebutuhan
+        this.executorService = Executors.newFixedThreadPool(4);
+        this.scheduler = Executors.newScheduledThreadPool(1);
     }
 
     public void executeTask(Runnable task) {
@@ -21,6 +24,10 @@ public class ExecutorServiceManager {
         });
     }
 
+    public ScheduledFuture<?> executePeriodicTask(Runnable task, long initialDelay, long period, TimeUnit unit) {
+        return scheduler.scheduleAtFixedRate(task, initialDelay, period, unit);
+    }
+
     public Future<?> submitTask(Runnable task) {
         return executorService.submit(() -> {
             try {
@@ -29,14 +36,6 @@ public class ExecutorServiceManager {
                 // Handle exception here (log or alert the user)
             }
         });
-    }
-
-    public ScheduledExecutorService getScheduledExecutor() {
-        if (scheduler != null && !scheduler.isShutdown()) {
-            scheduler.shutdown();
-        }
-        scheduler = Executors.newScheduledThreadPool(1);
-        return scheduler;
     }
 
     public void shutdownScheduler() {
