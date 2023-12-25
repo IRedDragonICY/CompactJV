@@ -1,6 +1,8 @@
 package com.example.compactjv;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class CommandRunner {
     private static final String CMD = "cmd.exe";
@@ -13,6 +15,9 @@ public class CommandRunner {
             String line;
             while ((line = reader.readLine()) != null) {
                 output.append(line).append("\n");
+                if (!withOutput) {
+                    System.out.println(line);
+                }
             }
             process.waitFor();
         } catch (IOException | InterruptedException e) {

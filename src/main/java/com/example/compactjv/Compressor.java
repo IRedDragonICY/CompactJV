@@ -3,10 +3,12 @@ package com.example.compactjv;
 public class Compressor {
     private static final String START_COMMAND = "start /B cmd.exe /c compact";
     public void compress(String filePath, String algorithm) {
-        CommandRunner.runCommand(START_COMMAND + " /A /C /I /S /F /EXE:" + algorithm + " /s:\"" + filePath + "\"", false);
+        String log = CommandRunner.runCommand(START_COMMAND + " /A /C /I /S /F /EXE:" + algorithm + " /s:\"" + filePath + "\"", true);
+        System.out.println(log);
     }
 
     public void decompress(String filePath) {
-        CommandRunner.runCommand(START_COMMAND + " /U /I /A /F /s:\"" + filePath + "\"", false);
+        String log = CommandRunner.runCommand(START_COMMAND + " /U /I /A /F /s:\"" + filePath + "\"", true);
+        System.out.println(log);
     }
 }

@@ -5,7 +5,10 @@ import com.example.compactjv.File;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import java.util.concurrent.*;
+
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 public class LoadingBarUI {
 
     private final File compact;
@@ -31,7 +34,9 @@ public class LoadingBarUI {
                 ScheduledExecutorService scheduler = executorManager.getScheduler();
                 scheduler.schedule(() -> Platform.runLater(() -> {
                     percentageLabel.setText("");
-                    executorManager.shutdownScheduler();
+                    if (!scheduler.isShutdown()) {
+                        executorManager.shutdownScheduler();
+                    }
                 }), 5, TimeUnit.SECONDS);
             });
         });
@@ -52,4 +57,3 @@ public class LoadingBarUI {
         return (double) (isCompression ? totalCompressed : totalDecompressed) / total * 100;
     }
 }
-

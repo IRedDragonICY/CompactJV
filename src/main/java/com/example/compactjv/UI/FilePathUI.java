@@ -5,6 +5,7 @@ import com.example.compactjv.File;
 import com.example.compactjv.Size;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -13,7 +14,6 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.stage.DirectoryChooser;
-import javafx.scene.control.Button;
 
 
 public class FilePathUI {
@@ -100,9 +100,7 @@ public class FilePathUI {
         executorServiceManager.executeTask(() -> {
             boolean isCompressed = compact.isCompressed(filePath);
             Size size = compact.calculateFolderSize(filePath);
-            Platform.runLater(() -> {
-                updateUI(isCompressed, size);
-            });
+            Platform.runLater(() -> updateUI(isCompressed, size));
         });
     }
 
