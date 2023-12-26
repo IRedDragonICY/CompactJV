@@ -2,6 +2,7 @@ package com.example.compactjv;
 
 import lombok.Getter;
 import lombok.Setter;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -99,8 +100,8 @@ public class File {
         for (String line : lines) {
             if (line.contains("total bytes of data")) {
                 String[] parts = line.split(" ");
-                size = Long.parseLong(parts[0].replace(".", ""));
-                sizeOnDisk = Long.parseLong(parts[8].replace(".", ""));
+                size = Long.parseLong(parts[0].replace(",", "").replace(".", ""));
+                sizeOnDisk = Long.parseLong(parts[8].replace(",", "").replace(".", ""));
                 break;
             }
         }
@@ -114,8 +115,8 @@ public class File {
                 .findFirst()
                 .ifPresent(line -> {
                     String[] parts = line.split(" ");
-                    setTotalCompressed(Long.parseLong(parts[indexOfCompressed].replace(".", "")));
-                    setTotalDecompressed(Long.parseLong(parts[indexOfDecompressed].replace(".", "")));
+                    setTotalCompressed(Long.parseLong(parts[indexOfCompressed].replace(",", "").replace(".", "")));
+                    setTotalDecompressed(Long.parseLong(parts[indexOfDecompressed].replace(",", "").replace(".", "")));
                 });
     }
 

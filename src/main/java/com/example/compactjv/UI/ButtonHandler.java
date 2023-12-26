@@ -4,12 +4,12 @@ import com.example.compactjv.ExecutorServiceManager;
 import com.example.compactjv.File;
 import com.example.compactjv.Size;
 import javafx.application.Platform;
-
-import java.util.concurrent.Future;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+
+import java.util.concurrent.Future;
 public class ButtonHandler {
 
     private final File compact;
@@ -96,10 +96,7 @@ public class ButtonHandler {
     }
 
     private void updateButtonVisibilityAndText(boolean isCompressed) {
-        compressButton.setDisable(true);
         decompressButton.setDisable(!isCompressed);
-        compressButton.setDisable(false);
-        progressBar.setVisible(false);
         compressButton.setText(isCompressed ? "Compress Again" : "Compress");
     }
 }

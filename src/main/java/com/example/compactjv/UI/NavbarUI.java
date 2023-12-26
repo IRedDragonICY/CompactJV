@@ -3,10 +3,10 @@ package com.example.compactjv.UI;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
-import javafx.scene.control.Button;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -41,6 +41,8 @@ public class NavbarUI {
 
     private void showNavbar() {
         Timeline timeline = createTimeline(200);
+        infoText.visibleProperty().setValue(true);
+        homeText.visibleProperty().setValue(true);
         timeline.setOnFinished(e -> navbar.getChildren().addAll(infoText, homeText));
         timeline.play();
         isNavbarVisible = true;

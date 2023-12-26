@@ -37,7 +37,7 @@ public class Controller {
         percentageLabel.setText("");
         progressBar.setVisible(false);
 
-        new DebuggingBoxUI(debugTextArea);
+        new DebuggingBoxUI(debugTextArea, executorServiceManager);
         new ButtonHandler(compact, currentSizeLabel, sizeOnDiskLabel, compressButton, decompressButton, compressionAlgorithmChoiceBox, executorServiceManager, percentageLabel, progressBar);
         new NavbarUI(infoText, homeText, navbar, hamburgerButton);
         new WindowControlsUI(minimizeButton, closeButton);

@@ -19,7 +19,7 @@ public class ExecutorServiceManager {
             try {
                 task.run();
             } catch (Exception e) {
-                // Handle exception here (log or alert the user)
+                e.printStackTrace();
             }
         });
     }

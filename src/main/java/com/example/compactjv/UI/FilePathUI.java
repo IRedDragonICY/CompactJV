@@ -105,7 +105,7 @@ public class FilePathUI {
     }
 
     private void updateUI(boolean isCompressed, Size size) {
-        compressButton.setDisable(isCompressed);
+        compressButton.setDisable(false);
         decompressButton.setDisable(!isCompressed);
         compressButton.setText(isCompressed ? "Compress Again" : "Compress");
         currentSizeLabel.setText(size.getSizeFormatted());

@@ -9,8 +9,8 @@ import javafx.scene.control.ProgressBar;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-public class LoadingBarUI {
 
+public class LoadingBarUI {
     private final File compact;
     private final Label percentageLabel;
     private final ProgressBar progressBar;
@@ -29,16 +29,16 @@ public class LoadingBarUI {
                 updatePercentageLabel(isCompression);
             }
 
-            Platform.runLater(() -> {
-                percentageLabel.setText("Finished!");
-                ScheduledExecutorService scheduler = executorManager.getScheduler();
-                scheduler.schedule(() -> Platform.runLater(() -> {
-                    percentageLabel.setText("");
-                    if (!scheduler.isShutdown()) {
-                        executorManager.shutdownScheduler();
-                    }
-                }), 5, TimeUnit.SECONDS);
-            });
+            if (future.isDone()) {
+                Platform.runLater(() -> {
+                    percentageLabel.setText("Done!");
+                    progressBar.setVisible(false);
+                    ScheduledExecutorService scheduler = executorManager.getScheduler();
+                    scheduler.schedule(() -> Platform.runLater(() -> {
+                        percentageLabel.setText("");
+                    }), 5, TimeUnit.SECONDS);
+                });
+            }
         });
     }
 
@@ -50,6 +50,7 @@ public class LoadingBarUI {
         Platform.runLater(() -> {
             percentageLabel.setText(String.format("%.2f", percentage) + "%");
             progressBar.setProgress(percentage / 100);
+            progressBar.setVisible(true);
         });
     }
 

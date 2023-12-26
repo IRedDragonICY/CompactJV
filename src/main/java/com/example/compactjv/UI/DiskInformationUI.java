@@ -15,7 +15,7 @@ public class DiskInformationUI {
     }
     private void setupDiskSizeList() {
         Disk[] disks = Disk.getDisks();
-        diskContainer.setPadding(new Insets(50, 0, 0, 10));
+        diskContainer.setPadding(new Insets(65, 0, 0, 10));
         for (Disk disk : disks) {
             VBox diskBox = new VBox();
             Label diskName = new Label(Character.toString(disk.getLabel()));
