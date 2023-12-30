@@ -1,19 +1,16 @@
 package com.example.compactjv.UI;
 
+import com.example.compactjv.Controller;
 import com.example.compactjv.File;
-import com.example.compactjv.ExecutorServiceManager;
 import javafx.application.Platform;
-import javafx.scene.control.Label;
 
 import java.util.concurrent.TimeUnit;
 
-public class MemoryInformationUI {
-    private final Label memoryUsageLabel;
-    private final ExecutorServiceManager executorServiceManager;
+public class MemoryInformationUI extends Controller {
 
-    public MemoryInformationUI(Label memoryUsageLabel, ExecutorServiceManager executorServiceManager) {
-        this.memoryUsageLabel = memoryUsageLabel;
-        this.executorServiceManager = executorServiceManager;
+
+    public MemoryInformationUI() {
+        super();
         setupMemoryUsageLabel();
     }
 

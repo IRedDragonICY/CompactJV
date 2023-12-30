@@ -19,6 +19,53 @@
 }
 
 
+#compressionAlgorithmChoiceBox {
+    -fx-background-color: #1B1B1E;
+}
+
+#compressionAlgorithmChoiceBox .label {
+    -fx-text-fill: white;
+    -fx-font-family: "Segoe UI";
+}
+
+#compressionAlgorithmChoiceBox .context-menu .menu-item .label {
+    -fx-text-fill: black;
+}
+
+#compressionAlgorithmChoiceBox .context-menu .menu-item:focused {
+    -fx-background-color: gray;
+}
+
+
+#compressionAlgorithmChoiceBox .list-cell:filled:selected:focused,
+#compressionAlgorithmChoiceBox .list-cell:filled:selected {
+    -fx-background-color: #3A3A3E;
+    -fx-text-fill: white;
+}
+
+/* application.css */
+
+#CompressionAlgorithmRectangle:hover,
+#TotalFilesRectangle:hover,
+#CPUUsageRectangle:hover,
+#RAMUsageRectangle:hover,
+#DiskSizeRectangle:hover {
+    -fx-fill: #2c2c2e;
+    -fx-stroke: #000000;
+    -fx-stroke-width: 0.0;
+    -fx-arc-width: 10.0;
+    -fx-arc-height: 10.0;
+}
+
+#EstimatedSizeRectangle:hover,
+#CurrentSizeRectangle:hover {
+    -fx-fill: #A5A5A5;
+    -fx-stroke: #000000;
+    -fx-stroke-width: 0.0;
+    -fx-arc-width: 10.0;
+    -fx-arc-height: 10.0;
+}
+
 
 
 

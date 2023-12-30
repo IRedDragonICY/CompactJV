@@ -1,24 +1,17 @@
 package com.example.compactjv.UI;
 
+import com.example.compactjv.Controller;
 import com.example.compactjv.ExecutorServiceManager;
-import com.example.compactjv.File;
 import javafx.application.Platform;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class LoadingBarUI {
-    private final File compact;
-    private final Label percentageLabel;
-    private final ProgressBar progressBar;
+public class LoadingBarUI extends Controller {
 
-    public LoadingBarUI(File compact, Label percentageLabel, ProgressBar progressBar, Future<?> future, String filePath, boolean isCompression, ExecutorServiceManager executorServiceManager) {
-        this.compact = compact;
-        this.percentageLabel = percentageLabel;
-        this.progressBar = progressBar;
+    public LoadingBarUI(Future<?> future, String filePath, boolean isCompression) {
+        super();
         monitorTaskUntilCompletion(future, filePath, isCompression, executorServiceManager);
     }
 

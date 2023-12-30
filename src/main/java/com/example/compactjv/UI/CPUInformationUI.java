@@ -1,19 +1,16 @@
 package com.example.compactjv.UI;
 
-import com.example.compactjv.ExecutorServiceManager;
+import com.example.compactjv.Controller;
 import com.example.compactjv.File;
 import javafx.application.Platform;
-import javafx.scene.control.Label;
 
 import java.util.concurrent.TimeUnit;
 
-public class CPUInformationUI {
-    Label cpuUsageLabel;
-    ExecutorServiceManager executorServiceManager;
+public class CPUInformationUI extends Controller {
 
-    public CPUInformationUI(Label cpuUsageLabel, ExecutorServiceManager executorServiceManager) {
-        this.cpuUsageLabel = cpuUsageLabel;
-        this.executorServiceManager = executorServiceManager;
+
+    public CPUInformationUI() {
+        super();
         setupCPUUsageLabel();
     }
 

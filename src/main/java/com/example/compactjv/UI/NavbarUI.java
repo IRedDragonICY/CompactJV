@@ -1,33 +1,20 @@
 package com.example.compactjv.UI;
 
+import com.example.compactjv.Controller;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class NavbarUI {
-    private final Label infoText;
-    private final Label homeText;
-    private final AnchorPane navbar;
-    private final Button hamburgerButton;
+public class NavbarUI extends Controller {
     private boolean isNavbarVisible;
 
-    public NavbarUI(Label infoText, Label homeText, AnchorPane navbar, Button hamburgerButton) {
-        this.infoText = infoText;
-        this.homeText = homeText;
-        this.navbar = navbar;
-        this.hamburgerButton = hamburgerButton;
-
-        // hide the navbar initially
+    public NavbarUI() {
+        super();
         hideNavbar();
-
-        // toggle navbar visibility when hamburger button is clicked
         hamburgerButton.setOnMouseClicked(event -> toggleNavbar());
     }
 

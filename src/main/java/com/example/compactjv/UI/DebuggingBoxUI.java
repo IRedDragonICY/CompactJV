@@ -1,19 +1,18 @@
 package com.example.compactjv.UI;
 
+import com.example.compactjv.Controller;
 import com.example.compactjv.ExecutorServiceManager;
 import javafx.application.Platform;
-import javafx.scene.control.TextArea;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-public class DebuggingBoxUI {
+public class DebuggingBoxUI extends Controller {
     private static final int MAX_TEXT_AREA_LENGTH = 5000;
-    final TextArea debugTextArea;
 
-    public DebuggingBoxUI(TextArea debugTextArea, ExecutorServiceManager executorServiceManager) {
-        this.debugTextArea = debugTextArea;
+    public DebuggingBoxUI() {
+        super();
         debugTextArea.setFont(javafx.scene.text.Font.font("Consolas"));
         init(executorServiceManager);
     }

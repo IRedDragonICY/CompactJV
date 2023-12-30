@@ -12,18 +12,18 @@
             style="-fx-background-color: #151419;" stylesheets="@application.css" xmlns="http://javafx.com/javafx/21"
             fx:controller="com.example.compactjv.Controller">
 
-    <Rectangle fx:id="roundedRectangle1" arcHeight="10.0" arcWidth="10.0" fill="#878787" height="200.0"
+    <Rectangle fx:id="EstimatedSizeRectangle" arcHeight="10.0" arcWidth="10.0" fill="#878787" height="200.0"
                layoutX="322.0" layoutY="291.0" stroke="#000000" strokeWidth="0.0" width="200.0"/>
-    <Rectangle fx:id="roundedRectangle12" arcHeight="10.0" arcWidth="10.0" fill="#878787" height="200.0"
+    <Rectangle fx:id="CurrentSizeRectangle" arcHeight="10.0" arcWidth="10.0" fill="#878787" height="200.0"
                layoutX="98.0" layoutY="291.0" stroke="#000000" strokeWidth="0.0" width="200.0"/>
-    <Rectangle fx:id="roundedRectangle131" arcHeight="10.0" arcWidth="10.0" fill="#1b1b1e" height="100.0"
+    <Rectangle fx:id="CompressionAlgorithmRectangle" arcHeight="10.0" arcWidth="10.0" fill="#1b1b1e" height="100.0"
                layoutX="98.0" layoutY="514.0" stroke="#000000" strokeWidth="0.0" width="425.0"/>
-    <Rectangle fx:id="roundedRectangle141" arcHeight="10.0" arcWidth="10.0" fill="#1b1b1e" height="200.0"
+    <Rectangle fx:id="TotalFilesRectangle" arcHeight="10.0" arcWidth="10.0" fill="#1b1b1e" height="200.0"
                layoutX="544.0" layoutY="70.0" stroke="#000000" strokeWidth="0.0" width="200.0"/>
-    <Rectangle fx:id="roundedRectangle142" arcHeight="10.0" arcWidth="10.0" fill="#1b1b1e" height="200.0"
-               layoutX="762.0" layoutY="70.0" stroke="#000000" strokeWidth="0.0" width="200.0"/>
-    <Rectangle fx:id="roundedRectangle1411" arcHeight="10.0" arcWidth="10.0" fill="#1b1b1e" height="200.0"
-               layoutX="982.0" layoutY="70.0" stroke="#000000" strokeWidth="0.0" width="200.0"/>
+    <Rectangle fx:id="CPUUsageRectangle" arcHeight="10.0" arcWidth="10.0" fill="#1b1b1e" height="200.0" layoutX="762.0"
+               layoutY="70.0" stroke="#000000" strokeWidth="0.0" width="200.0"/>
+    <Rectangle fx:id="RAMUsageRectangle" arcHeight="10.0" arcWidth="10.0" fill="#1b1b1e" height="200.0" layoutX="982.0"
+               layoutY="70.0" stroke="#000000" strokeWidth="0.0" width="200.0"/>
     <HBox layoutX="1297.0" layoutY="-82.0" AnchorPane.rightAnchor="-140.0" AnchorPane.topAnchor="-82.0"/>
 
     <HBox alignment="CENTER" spacing="10"/>
@@ -76,8 +76,8 @@
             <Font name="Segoe UI Black" size="32.0"/>
         </font>
     </Label>
-    <ChoiceBox fx:id="compressionAlgorithmChoiceBox" layoutX="105.0" layoutY="521.0" prefHeight="86.0"
-               prefWidth="417.0" style="-fx-background-color: #1B1B1E; -fx-text-fill: white;">
+    <ChoiceBox fx:id="compressionAlgorithmChoiceBox" layoutX="105.0" layoutY="521.0" prefHeight="86.0" prefWidth="417.0"
+               style="-fx-background-color: #1B1B1E; -fx-text-fill: white;">
         <items>
             <FXCollections fx:factory="observableArrayList">
                 <String fx:value="XPRESS4K"/>
@@ -134,8 +134,8 @@
         </font>
 
     </TextField>
-    <Label fx:id="cpuUsageLabel" alignment="CENTER" layoutX="762.0" layoutY="151.0" prefHeight="39.0"
-           prefWidth="200.0" text="? %" textFill="WHITE">
+    <Label fx:id="cpuUsageLabel" alignment="CENTER" layoutX="762.0" layoutY="151.0" prefHeight="39.0" prefWidth="200.0"
+           text="? %" textFill="WHITE">
         <font>
             <Font name="Segoe UI Black" size="40.0"/>
         </font>
@@ -225,8 +225,8 @@
         </children>
     </AnchorPane>
     <Label layoutX="607.0" layoutY="306.0" style="-fx-font-size: 20;" text="Disk Size" textFill="#878787"/>
-    <Rectangle fx:id="DebuggingRectangle" arcHeight="10.0" arcWidth="10.0" fill="#1b1b1e" height="406.0"
-               layoutX="762.0" layoutY="290.0" stroke="#000000" strokeWidth="0.0" width="420.0"/>
+    <Rectangle fx:id="DebuggingRectangle" arcHeight="10.0" arcWidth="10.0" fill="#1b1b1e" height="406.0" layoutX="762.0"
+               layoutY="290.0" stroke="#000000" strokeWidth="0.0" width="420.0"/>
     <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="774.0" layoutY="301.0" preserveRatio="true">
         <image>
             <Image url="@imgs/bug.png"/>

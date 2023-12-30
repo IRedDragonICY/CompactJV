@@ -1,37 +1,16 @@
 package com.example.compactjv.UI;
 
-import com.example.compactjv.ExecutorServiceManager;
-import com.example.compactjv.File;
+import com.example.compactjv.Controller;
 import com.example.compactjv.Size;
 import javafx.application.Platform;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 
 import java.util.concurrent.Future;
-public class ButtonHandler {
 
-    private final File compact;
-    private final Label currentSizeLabel;
-    private final Label sizeOnDiskLabel;
-    private final Button compressButton;
-    private final Button decompressButton;
-    private final ChoiceBox compressionAlgorithmChoiceBox;
-    private final ExecutorServiceManager executorServiceManager;
-    private final Label percentageLabel;
-    private final ProgressBar progressBar;
+public class ButtonHandler extends Controller {
 
-    public ButtonHandler(File compact, Label currentSizeLabel, Label sizeOnDiskLabel, Button compressButton, Button decompressButton, ChoiceBox compressionAlgorithmChoiceBox, ExecutorServiceManager executorServiceManager, Label percentageLabel, ProgressBar progressBar) {
-        this.compact = compact;
-        this.currentSizeLabel = currentSizeLabel;
-        this.sizeOnDiskLabel = sizeOnDiskLabel;
-        this.compressButton = compressButton;
-        this.decompressButton = decompressButton;
-        this.compressionAlgorithmChoiceBox = compressionAlgorithmChoiceBox;
-        this.executorServiceManager = executorServiceManager;
-        this.percentageLabel = percentageLabel;
-        this.progressBar = progressBar;
+
+    public ButtonHandler() {
+        super();
         setupCompressionButton();
         setupDecompressionButton();
     }
@@ -51,14 +30,14 @@ public class ButtonHandler {
         disableButtons();
         Runnable task = createCompressionOrDecompressionTask(isCompression, filePath);
         Future<?> future = executorServiceManager.submitTask(task);
-        new LoadingBarUI(compact, percentageLabel, progressBar, future, filePath, isCompression, executorServiceManager);
+        new LoadingBarUI(future, filePath, isCompression);
     }
 
     private Runnable createCompressionOrDecompressionTask(boolean isCompression, String filePath) {
         return () -> {
             progressBar.setVisible(true);
             if (isCompression) {
-                String algorithm = compressionAlgorithmChoiceBox.getValue().toString();
+                String algorithm = compressionAlgorithmChoiceBox.getValue();
                 compact.compress(filePath, algorithm);
             } else {
                 compact.decompress(filePath);

@@ -5,50 +5,81 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 public class Controller {
+    @Getter
+    private static Controller instance;
+    protected final ExecutorServiceManager executorServiceManager = new ExecutorServiceManager();
     @FXML
-    private Button closeButton, minimizeButton, compressButton, decompressButton, informationButton;
+    protected Button closeButton, minimizeButton, compressButton, decompressButton, informationButton;
     @FXML
-    private TextField filePathField;
+    protected TextField filePathField;
     @FXML
-    private Label currentSizeLabel, sizeOnDiskLabel, percentageLabel, cpuUsageLabel, memoryUsageLabel, totalFolderOnFile;
+    protected Label currentSizeLabel, sizeOnDiskLabel, percentageLabel, cpuUsageLabel, memoryUsageLabel, totalFolderOnFile;
     @FXML
-    private ChoiceBox<String> compressionAlgorithmChoiceBox;
+    protected ChoiceBox<String> compressionAlgorithmChoiceBox;
     @FXML
-    private ProgressBar progressBar;
+    protected ProgressBar progressBar;
+    @FXML
+    protected Label infoText, homeText;
+    @FXML
+    protected AnchorPane navbar;
+    @FXML
+    protected Button hamburgerButton;
+    @FXML
+    protected VBox diskContainer;
+    @FXML
+    protected TextArea debugTextArea;
+    protected File compact = new File();
 
-    @FXML
-    private Label infoText;
-    @FXML
-    private Label homeText;
-    @FXML
-    private AnchorPane navbar;
-    @FXML
-    private Button hamburgerButton;
-    @FXML
-    private VBox diskContainer;
-    @FXML
-    private TextArea debugTextArea;
+    public Controller() {
+        if (instance == null) {
+            instance = this;
+        }
+        compact = Controller.getInstance().getCompact();
+        filePathField = Controller.getInstance().getFilePathField();
+        currentSizeLabel = Controller.getInstance().getCurrentSizeLabel();
+        sizeOnDiskLabel = Controller.getInstance().getSizeOnDiskLabel();
+        totalFolderOnFile = Controller.getInstance().getTotalFolderOnFile();
+        compressButton = Controller.getInstance().getCompressButton();
+        decompressButton = Controller.getInstance().getDecompressButton();
+        percentageLabel = Controller.getInstance().getPercentageLabel();
+        progressBar = Controller.getInstance().getProgressBar();
+        cpuUsageLabel = Controller.getInstance().getCpuUsageLabel();
+        memoryUsageLabel = Controller.getInstance().getMemoryUsageLabel();
+        compressionAlgorithmChoiceBox = Controller.getInstance().getCompressionAlgorithmChoiceBox();
+        infoText = Controller.getInstance().getInfoText();
+        homeText = Controller.getInstance().getHomeText();
+        navbar = Controller.getInstance().getNavbar();
+        hamburgerButton = Controller.getInstance().getHamburgerButton();
+        diskContainer = Controller.getInstance().getDiskContainer();
+        debugTextArea = Controller.getInstance().getDebugTextArea();
+        closeButton = Controller.getInstance().getCloseButton();
+        minimizeButton = Controller.getInstance().getMinimizeButton();
+        informationButton = Controller.getInstance().getInformationButton();
+    }
+
     public void initialize() {
-        File compact = new File();
-        ExecutorServiceManager executorServiceManager = new ExecutorServiceManager();
         compressionAlgorithmChoiceBox.setDisable(true);
         percentageLabel.setText("");
         progressBar.setVisible(false);
 
-        new DebuggingBoxUI(debugTextArea, executorServiceManager);
-
-        new ButtonHandler(compact, currentSizeLabel, sizeOnDiskLabel, compressButton, decompressButton, compressionAlgorithmChoiceBox, executorServiceManager, percentageLabel, progressBar);
-        new NavbarUI(infoText, homeText, navbar, hamburgerButton);
-        new WindowControlsUI(minimizeButton, closeButton);
-        new ButtonUI(compressButton, decompressButton, informationButton);
-        new FilePathUI(compact, filePathField, currentSizeLabel, sizeOnDiskLabel, totalFolderOnFile, compressButton, decompressButton, executorServiceManager);
-        new DiskInformationUI(diskContainer);
-        new CPUInformationUI(cpuUsageLabel, executorServiceManager);
-        new MemoryInformationUI(memoryUsageLabel, executorServiceManager);
+        setupUI();
     }
 
+    private void setupUI() {
+        new DebuggingBoxUI();
+        new ButtonHandler();
+        new NavbarUI();
+        new WindowControlsUI();
+        new ButtonUI();
+        new FilePathUI();
+        new DiskInformationUI();
+        new CPUInformationUI();
+        new MemoryInformationUI();
+    }
 }
-
-

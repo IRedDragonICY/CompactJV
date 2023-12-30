@@ -1,5 +1,6 @@
 package com.example.compactjv.UI;
 
+import com.example.compactjv.Controller;
 import com.example.compactjv.Disk;
 import javafx.application.Platform;
 import javafx.concurrent.ScheduledService;
@@ -11,12 +12,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
-public class DiskInformationUI {
-    private final VBox diskContainer;
-    private ScheduledService<Void> updateService;
+public class DiskInformationUI extends Controller {
 
-    public DiskInformationUI(VBox diskContainer) {
-        this.diskContainer = diskContainer;
+    public DiskInformationUI() {
+        super();
+        diskContainer = Controller.getInstance().getDiskContainer();
         setupDiskSizeList();
         startUpdateService();
     }
@@ -33,9 +33,9 @@ public class DiskInformationUI {
             diskSpaceBar.setPrefWidth(160);
             diskSpaceBar.setProgress(1-freeSpaceRatio);
 
-            diskName.setStyle("-fx-font-family: 'Segoe UI'; -fx-text-fill: white;");
-            diskFreeSpace.setStyle("-fx-font-family: 'Segoe UI'; -fx-text-fill: white;");
-            diskTotalSize.setStyle("-fx-font-family: 'Segoe UI'; -fx-text-fill: white;");
+            diskName.setStyle("-fx-font-family: 'Segoe UI Black'; -fx-text-fill: white;");
+            diskFreeSpace.setStyle("-fx-font-family: 'Segoe UI Semilight'; -fx-text-fill: white;");
+            diskTotalSize.setStyle("-fx-font-family: 'Segoe UI Semilight'; -fx-text-fill: white;");
 
             if(freeSpaceRatio < 0.2) {
                 diskSpaceBar.setStyle("-fx-accent: red;");
@@ -52,7 +52,7 @@ public class DiskInformationUI {
     }
 
     private void startUpdateService() {
-        updateService = new ScheduledService<>() {
+        ScheduledService<Void> updateService = new ScheduledService<>() {
             protected Task<Void> createTask() {
                 return new Task<>() {
                     protected Void call() {

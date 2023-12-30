@@ -1,31 +1,31 @@
 package com.example.compactjv.UI;
 
+import com.example.compactjv.Controller;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.stage.*;
-import javafx.scene.*;
-import javafx.scene.layout.*;
-import javafx.scene.text.*;
-import javafx.scene.image.*;
-import javafx.geometry.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
-
-import javafx.scene.control.Button;
-import lombok.Getter;
-import lombok.Setter;
-
 @Getter @Setter
-public class ButtonUI {
-    private Button compressButton, decompressButton, informationButton;
+public class ButtonUI extends Controller {
 
-
-    public ButtonUI(Button compressButton, Button decompressButton, Button informationButton) {
-
-        this.compressButton = compressButton;
-        this.decompressButton = decompressButton;
-        this.informationButton = informationButton;
+    public ButtonUI() {
+        super();
         init();
     }
 
