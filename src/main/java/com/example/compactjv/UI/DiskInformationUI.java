@@ -1,17 +1,24 @@
 package com.example.compactjv.UI;
 
 import com.example.compactjv.Disk;
+import javafx.application.Platform;
+import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 public class DiskInformationUI {
     private final VBox diskContainer;
+    private ScheduledService<Void> updateService;
+
     public DiskInformationUI(VBox diskContainer) {
         this.diskContainer = diskContainer;
         setupDiskSizeList();
+        startUpdateService();
     }
     private void setupDiskSizeList() {
         Disk[] disks = Disk.getDisks();
@@ -42,5 +49,24 @@ public class DiskInformationUI {
             diskBox.getChildren().addAll(labelAndBar, diskFreeSpace, diskTotalSize);
             diskContainer.getChildren().add(diskBox);
         }
+    }
+
+    private void startUpdateService() {
+        updateService = new ScheduledService<>() {
+            protected Task<Void> createTask() {
+                return new Task<>() {
+                    protected Void call() {
+                        Platform.runLater(() -> {
+                            diskContainer.getChildren().clear();
+                            setupDiskSizeList();
+                        });
+                        return null;
+                    }
+                };
+            }
+        };
+
+        updateService.setPeriod(Duration.seconds(5));
+        updateService.start();
     }
 }

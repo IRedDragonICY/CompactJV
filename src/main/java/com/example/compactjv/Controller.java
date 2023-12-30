@@ -38,13 +38,14 @@ public class Controller {
         progressBar.setVisible(false);
 
         new DebuggingBoxUI(debugTextArea, executorServiceManager);
+
         new ButtonHandler(compact, currentSizeLabel, sizeOnDiskLabel, compressButton, decompressButton, compressionAlgorithmChoiceBox, executorServiceManager, percentageLabel, progressBar);
         new NavbarUI(infoText, homeText, navbar, hamburgerButton);
         new WindowControlsUI(minimizeButton, closeButton);
         new ButtonUI(compressButton, decompressButton, informationButton);
-        new FilePathUI(compact, filePathField, currentSizeLabel, sizeOnDiskLabel, totalFolderOnFile, compressButton, decompressButton, compressionAlgorithmChoiceBox, executorServiceManager);
+        new FilePathUI(compact, filePathField, currentSizeLabel, sizeOnDiskLabel, totalFolderOnFile, compressButton, decompressButton, executorServiceManager);
         new DiskInformationUI(diskContainer);
-        new CPUInformationUI(cpuUsageLabel);
+        new CPUInformationUI(cpuUsageLabel, executorServiceManager);
         new MemoryInformationUI(memoryUsageLabel, executorServiceManager);
     }
 
