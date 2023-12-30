@@ -1,8 +1,8 @@
 package com.example.compactjv;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,11 +15,6 @@ public class Disk {
     private Size totalSpace;
     private Size freeSpace;
     private char label;
-
-    public static int countDisks() {
-        String output = CommandRunner.runCommand("wmic logicaldisk get name", true);
-        return Objects.requireNonNull(output).split("\n").length - 1;
-    }
 
     public static Disk[] getDisks() {
         String output = CommandRunner.runCommand("wmic logicaldisk get name,size,freespace", true);

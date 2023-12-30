@@ -83,7 +83,7 @@ public class ButtonUI extends Controller {
                 primaryStage.getScene().getRoot().setEffect(null);
                 primaryStage.getScene().getRoot().setDisable(false);
             });
-
+            okButton.setStyle("-fx-background-color: #F56E0FFF; -fx-background-radius: 10; -fx-text-fill: #121212FF;");
             javafx.scene.control.Button githubButton = new javafx.scene.control.Button("GitHub");
             githubButton.setOnAction(e -> {
 
@@ -94,7 +94,7 @@ public class ButtonUI extends Controller {
                     ex.printStackTrace();
                 }
             });
-
+            githubButton.setStyle("-fx-background-color: #F56E0FFF; -fx-background-radius: 10; -fx-text-fill: #121212FF;");
             content.add(header, 0, 0, 2, 1);
             content.add(version, 0, 1, 2, 1);
             content.add(logoImageView, 0, 2, 2, 1);

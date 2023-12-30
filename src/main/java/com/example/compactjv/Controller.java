@@ -81,5 +81,6 @@ public class Controller {
         new DiskInformationUI();
         new CPUInformationUI();
         new MemoryInformationUI();
+        new TooltipUI();
     }
 }
