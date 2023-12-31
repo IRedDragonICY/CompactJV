@@ -6,15 +6,15 @@ import javafx.application.Platform;
 
 import java.util.concurrent.TimeUnit;
 
-public class MemoryInformationUI extends Controller {
-
+public class MemoryInformationUI extends Controller implements InformationUI {
 
     public MemoryInformationUI() {
         super();
-        setupMemoryUsageLabel();
+        setupUsageLabel();
     }
 
-    private void setupMemoryUsageLabel() {
+    @Override
+    public void setupUsageLabel() {
         Runnable task = () -> {
             String memoryUsage = File.getMemoryUsage();
             Platform.runLater(() -> memoryUsageLabel.setText(memoryUsage + "%"));

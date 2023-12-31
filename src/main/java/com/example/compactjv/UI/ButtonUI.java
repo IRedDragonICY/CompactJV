@@ -41,7 +41,7 @@ public class ButtonUI extends Controller {
             dialog.initOwner(primaryStage);
             dialog.initStyle(StageStyle.TRANSPARENT);
             dialog.setWidth(400);
-            dialog.setHeight(400);
+            dialog.setHeight(420);
 
             GridPane content = new GridPane();
             content.setPadding(new Insets(20));
@@ -72,8 +72,11 @@ public class ButtonUI extends Controller {
                     """
                             Developed by:
                             1. Muhammad Farid Hendianto (Ndik)   {2200018401}
-                            2. Reyhanssan Islamey (Justin) {2200018411}
-                            3. Rendie Abdi Saputra (Ryu)    {2200018094}"""
+                            2. Reyhanssan Islamey (Justin)       {2200018411}
+                            3. Rendie Abdi Saputra (Ryu)         {2200018094}
+                            4. Fadhil Raifan Andika              {2200018458}
+                                                        
+                            """
             );
             developers.setFill(Color.WHITE);
 

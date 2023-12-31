@@ -6,15 +6,15 @@ import javafx.application.Platform;
 
 import java.util.concurrent.TimeUnit;
 
-public class CPUInformationUI extends Controller {
-
+public class CPUInformationUI extends Controller implements InformationUI {
 
     public CPUInformationUI() {
         super();
-        setupCPUUsageLabel();
+        setupUsageLabel();
     }
 
-    private void setupCPUUsageLabel() {
+    @Override
+    public void setupUsageLabel() {
         Runnable task = () -> {
             String cpuUsage = File.getCPUUsage();
             Platform.runLater(() -> cpuUsageLabel.setText(cpuUsage + "%"));
