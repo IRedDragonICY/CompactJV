@@ -34,6 +34,9 @@ CompactJV delivers high-performance file compression with the ease of use.
 - [Acknowledgements](#acknowledgements)
 
 ## Demo
+<p align="center">
+  <a href="http://www.youtube.com/watch?v=njlS3fTWxtY"><img src="http://img.youtube.com/vi/njlS3fTWxtY/0.jpg" alt="CompactJV Demo" width="480" height="360"></a>
+</p>
 
 <p align="center">
   <img src="documentation/demo/demo1.png" width="200" alt="Demo 1">
