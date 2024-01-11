@@ -1,6 +1,6 @@
 Privacy Policy
 
-Last updated: January 24, 2024
+Last updated: January 11, 2024
 
 This Privacy Policy describes how CompactJV ("we", "our", or "us") collects, uses, shares, and stores personal information of users of our mobile application ("you" or "your"). This policy applies to CompactJV on all platforms, including Windows, Android, and iOS.
 
